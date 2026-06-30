@@ -1021,9 +1021,9 @@ const SECTION_RANGES = [
   { label: 'Bilan', start: 15, end: 19 },
 ]
 
-function SegmentedProgress({ currentSlide, totalSlides, visible }: {
+function SegmentedProgress({ currentSlide, visible }: {
   currentSlide: number
-  totalSlides: number
+  totalSlides?: number
   visible: boolean
 }) {
   return (
@@ -1043,7 +1043,6 @@ function SegmentedProgress({ currentSlide, totalSlides, visible }: {
           fill = (currentSlide - section.start + 1) / sectionSlides
         }
         // For cover/sommaire (before sections) or merci (after) — show as filled/empty
-        const isBeforeAll = currentSlide < section.start
         const isAfterAll = currentSlide > section.end
         const isActive = currentSlide >= section.start && currentSlide <= section.end
 

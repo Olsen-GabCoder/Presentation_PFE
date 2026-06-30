@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { AlertTriangle, Bug, ShieldQuestion, Smartphone, Layers, User } from 'lucide-react'
+import { Bug, ShieldQuestion, Smartphone, Layers, User } from 'lucide-react'
 
 const limits = [
   {
