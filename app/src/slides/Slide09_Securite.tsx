@@ -54,14 +54,15 @@ export default function Slide09_Securite() {
         style={{
           backgroundImage: 'url(/images/securite.jpg)',
           backgroundSize: 'cover', backgroundPosition: 'center',
-          opacity: 0.16,
+          filter: 'grayscale(1)',
+          opacity: 0.12,
         }}
         initial={{ scale: 1.06, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.16 }}
+        animate={{ scale: 1, opacity: 0.12 }}
         transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
       />
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.15) 65%, rgba(0,0,0,0.4) 100%)',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.3) 65%, rgba(0,0,0,0.5) 100%)',
       }} />
 
       <motion.div
@@ -98,7 +99,7 @@ export default function Slide09_Securite() {
 
           {/* Stats */}
           <motion.div
-            className="flex" style={{ gap: '2.5cqw' }}
+            className="flex" style={{ gap: '2.5cqw', marginRight: '7cqw' }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
           >
             {[
@@ -129,8 +130,8 @@ export default function Slide09_Securite() {
                 className="flex-1 flex"
                 style={{
                   borderRadius: '0.8cqh',
-                  background: 'var(--surface-card)',
-                  border: '1px solid var(--border-subtle)',
+                  background: 'rgba(18,18,20,0.85)',
+                  border: '1px solid rgba(255,255,255,0.08)',
                   borderLeft: '3px solid #c8102e',
                   padding: '0 1.5cqw',
                   gap: '1.2cqw',
@@ -167,8 +168,8 @@ export default function Slide09_Securite() {
             style={{
               width: '26cqw',
               borderRadius: '0.8cqh',
-              background: 'var(--surface-card)',
-              border: '1px solid var(--border-subtle)',
+              background: 'rgba(18,18,20,0.85)',
+              border: '1px solid rgba(255,255,255,0.08)',
               padding: '1.5cqh 1.5cqw',
             }}
             initial={{ opacity: 0, x: 30, scale: 0.97 }}
@@ -189,8 +190,8 @@ export default function Slide09_Securite() {
                   style={{
                     padding: '0.5cqh 0.9cqw',
                     borderRadius: '0.5cqh',
-                    background: i < 2 ? 'rgba(200,16,46,0.12)' : 'var(--surface-card)',
-                    border: i < 2 ? '1px solid rgba(200,16,46,0.25)' : '1px solid var(--border-subtle)',
+                    background: i < 2 ? 'rgba(200,16,46,0.14)' : 'rgba(255,255,255,0.06)',
+                    border: i < 2 ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.12)',
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: '2.2cqh', fontWeight: 600,
                     color: i < 2 ? '#c8102e' : 'rgba(255,255,255,0.7)',
