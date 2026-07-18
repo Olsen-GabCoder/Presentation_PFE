@@ -27,17 +27,20 @@ export function useRemoteSocket(onMessage: (msg: RemoteMessage) => void) {
   onMsgRef.current = onMessage
 
   useEffect(() => {
-    // La télécommande n'existe qu'en local : une page HTTPS (prod Render) ne peut pas ouvrir de ws://
-    if (window.location.protocol === 'https:') return
+    // Prod (HTTPS) : le relais tourne sur la même origine que les slides → wss://
+    // Local (HTTP/Vite) : relais séparé sur le port 3535 → ws://
+    const wsUrl = window.location.protocol === 'https:'
+      ? `wss://${window.location.host}`
+      : `ws://${window.location.hostname}:${WS_PORT}`
     let closed = false
     let retry: ReturnType<typeof setTimeout> | null = null
     const connect = () => {
       if (closed) return
       let ws: WebSocket
       try {
-        ws = new WebSocket(`ws://${window.location.hostname}:${WS_PORT}`)
+        ws = new WebSocket(wsUrl)
       } catch {
-        return // environnement sans WebSocket possible — on abandonne silencieusement
+        return // environnement sans WebSocket — on abandonne silencieusement
       }
       wsRef.current = ws
       ws.onopen = () => setConnected(true)

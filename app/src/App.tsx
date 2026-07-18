@@ -127,9 +127,15 @@ export default function App() {
   // ── Télécommande smartphone — commandes entrantes + URL du QR code ──
   const [remoteUrl, setRemoteUrl] = useState<string | null>(null)
   const remote = useRemoteSocket((msg) => {
-    if (msg.type === 'hello' && msg.ips?.length) {
-      const port = window.location.port || '5173'
-      setRemoteUrl(`http://${msg.ips[0]}:${port}/?remote=1`)
+    if (msg.type === 'hello') {
+      if (window.location.protocol === 'https:') {
+        // Prod : le téléphone passe par la même URL publique
+        setRemoteUrl(`${window.location.origin}/?remote=1`)
+      } else if (msg.ips?.length) {
+        // Local : URL LAN du laptop (le téléphone doit être sur le même réseau)
+        const port = window.location.port || '5173'
+        setRemoteUrl(`http://${msg.ips[0]}:${port}/?remote=1`)
+      }
     } else if (msg.type === 'cmd') {
       if (msg.action === 'next') engine.next()
       else if (msg.action === 'prev') engine.prev()

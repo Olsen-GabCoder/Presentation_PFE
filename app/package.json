@@ -9,7 +9,8 @@
     "remote": "node remote-server.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node remote-server.mjs"
   },
   "dependencies": {
     "@react-three/fiber": "^9.6.1",
