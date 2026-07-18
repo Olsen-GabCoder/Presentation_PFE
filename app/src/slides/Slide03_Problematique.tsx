@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import CountUp from '../components/CountUp'
 
+// Problématique — composition centrée en 3 temps (fidèle à l'introduction du rapport) :
+// 1. Constat macro (titre) · 2. Chiffres clés · 3. Question centrale + triple exigence
 export default function Slide03_Problematique() {
   return (
     <div className="relative w-full h-full overflow-hidden" style={{ background: '#141416' }}>
@@ -19,7 +21,7 @@ export default function Slide03_Problematique() {
         transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
       />
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 35%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0.4) 100%)',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.5) 100%)',
       }} />
 
       {/* Red accent */}
@@ -31,18 +33,19 @@ export default function Slide03_Problematique() {
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* Content — CENTRED layout */}
+      {/* Content — centré et équilibré verticalement */}
       <div
-        className="absolute inset-0 flex flex-col items-center"
-        style={{ paddingLeft: '6cqw', paddingRight: '6cqw', paddingTop: '4.5cqh', paddingBottom: '3.5cqh' }}
+        className="absolute inset-0 flex flex-col items-center justify-center"
+        style={{ paddingLeft: '9cqw', paddingRight: '9cqw', paddingTop: '6cqh', paddingBottom: '7cqh', gap: '4.5cqh' }}
       >
-        <div className="overflow-hidden" style={{ marginBottom: '2.5cqh', textAlign: 'center' }}>
+        {/* ── 1. Titre ── */}
+        <div className="overflow-hidden" style={{ textAlign: 'center' }}>
           <motion.h1
             initial={{ y: '105%' }}
             animate={{ y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             style={{
-              fontSize: '5.5cqh', fontWeight: 800, lineHeight: 1.1,
+              fontSize: '5.2cqh', fontWeight: 800, lineHeight: 1.15,
               color: '#fff', letterSpacing: '-0.025em', margin: 0,
             }}
           >
@@ -56,120 +59,103 @@ export default function Slide03_Problematique() {
           </motion.h1>
         </div>
 
-        {/* ── Stats row ── */}
-        <div className="flex" style={{ gap: '3cqw', marginBottom: '3.5cqh', width: '100%' }}>
+        {/* ── 2. Chiffres clés — 3 colonnes centrées, séparées ── */}
+        <div className="flex items-stretch justify-center" style={{ gap: '3.5cqw' }}>
           {[
-            { num: 20, suffix: ' ans', label: 'de productivité stagnante dans le BTP', sub: 'Aucune transformation numérique du secteur' },
-            { num: 38, suffix: ' %', label: 'd\'accès internet en Afrique', sub: 'Contre 68 % dans le monde — GSMA 2024' },
+            { num: 20, suffix: ' ans', label: 'de productivité stagnante', sub: 'Aucune transformation numérique du secteur' },
+            { num: 38, suffix: ' %', label: "d'accès internet en Afrique", sub: 'Contre 68 % dans le monde — GSMA 2024' },
+            { num: 23, suffix: ' %', label: 'de couverture en zone rurale', sub: 'Contre 57 % en zone urbaine — chantiers isolés' },
           ].map((s, i) => (
             <motion.div
               key={i}
-              className="flex-1"
-              style={{
-                borderLeft: '2px solid rgba(200,16,46,0.4)',
-                paddingLeft: '1.5cqw',
-              }}
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              className="flex items-stretch"
+              style={{ gap: '3.5cqw' }}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.7 + i * 0.12, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '4.3cqh', fontWeight: 800, color: '#c8102e',
-                margin: 0, lineHeight: 1,
-              }}>
-                <CountUp value={s.num} suffix={s.suffix} delay={0.9 + i * 0.15} />
-              </p>
-              <p style={{ fontSize: '2.2cqh', fontWeight: 600, color: '#fff', margin: 0, marginTop: '0.8cqh', lineHeight: 1.25 }}>
-                {s.label}
-              </p>
-              <p style={{ fontSize: '2.0cqh', color: 'var(--text-muted)', margin: 0, marginTop: '0.4cqh' }}>
-                {s.sub}
-              </p>
+              {i > 0 && <div style={{ width: 1, background: 'rgba(255,255,255,0.12)' }} />}
+              <div style={{ textAlign: 'center', width: '20cqw' }}>
+                <p style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '4.6cqh', fontWeight: 800, color: '#c8102e',
+                  margin: 0, lineHeight: 1,
+                }}>
+                  <CountUp value={s.num} suffix={s.suffix} delay={0.9 + i * 0.15} />
+                </p>
+                <p style={{ fontSize: '2.1cqh', fontWeight: 600, color: '#fff', margin: 0, marginTop: '0.9cqh', lineHeight: 1.25 }}>
+                  {s.label}
+                </p>
+                <p style={{ fontSize: '1.8cqh', color: 'var(--text-muted)', margin: 0, marginTop: '0.4cqh', lineHeight: 1.3 }}>
+                  {s.sub}
+                </p>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* ── Constat terrain — compact inline rows ── */}
-        <motion.p
-          style={{ fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-muted)', margin: 0, marginBottom: '1.2cqh', alignSelf: 'flex-start' }}
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
-        >
-          Constat terrain
-        </motion.p>
-
-        <div className="flex" style={{ gap: '1.5cqw', marginBottom: '3cqh', width: '100%' }}>
-          {[
-            { tool: 'Excel', desc: 'Suivi budgétaire, planification' },
-            { tool: 'WhatsApp', desc: 'Coordination sans traçabilité' },
-            { tool: 'Papier', desc: 'Plans, PV, consolidation laborieuse' },
-          ].map((p, i) => (
-            <motion.div
-              key={i}
-              className="flex-1 flex items-center"
-              style={{
-                padding: '1.2cqh 1.2cqw',
-                borderRadius: '0.6cqh',
-                borderLeft: '3px solid #c8102e',
-                background: 'var(--surface-card)',
-                gap: '1cqw',
-              }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.0 + i * 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <span style={{ fontSize: '2cqh', fontWeight: 700, color: '#c8102e', whiteSpace: 'nowrap' }}>
-                {p.tool}
-              </span>
-              <span style={{ fontSize: '1.8cqh', color: 'var(--text-secondary)', fontWeight: 400 }}>
-                {p.desc}
-              </span>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* ── Question centrale — full width, compact ── */}
+        {/* ── 3. Question centrale + triple exigence ── */}
         <motion.div
-          className="w-full"
           style={{
-            background: 'rgba(200,16,46,0.06)',
-            border: '1px solid rgba(200,16,46,0.12)',
-            borderRadius: '0.8cqh',
-            padding: '2cqh 2.5cqw',
+            background: 'rgba(200,16,46,0.07)',
+            border: '1px solid rgba(200,16,46,0.18)',
+            borderRadius: '1cqh',
+            padding: '3cqh 3.5cqw 2.6cqh',
             position: 'relative',
+            maxWidth: '78cqw',
+            textAlign: 'center',
           }}
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.3, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ delay: 1.2, duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
         >
           <span style={{
-            position: 'absolute', top: '-1cqh', left: '2cqw',
-            fontSize: '5cqh', fontWeight: 800, color: '#c8102e', opacity: 0.15,
+            position: 'absolute', top: '-2.2cqh', left: '2.5cqw',
+            fontSize: '7cqh', fontWeight: 800, color: '#c8102e', opacity: 0.35,
             fontFamily: 'Georgia, serif', lineHeight: 1,
           }}>
             {'\u201C'}
           </span>
 
           <p style={{
-            fontSize: '2cqh', fontWeight: 500, color: 'rgba(255,255,255,0.88)',
-            margin: 0, lineHeight: 1.55, fontStyle: 'italic',
+            fontSize: '2.5cqh', fontWeight: 500, color: 'rgba(255,255,255,0.94)',
+            margin: 0, lineHeight: 1.5, fontStyle: 'italic',
           }}>
-            Comment concevoir pour MIKA Services une plateforme web unifiée qui réponde aux exigences
-            opérationnelles du secteur BTP, aux contraintes infrastructurelles du Gabon,
-            et aux standards d'ingénierie logicielle internationaux ?
+            Comment concevoir pour MIKA Services une plateforme web unifiée qui réponde à la fois…
           </p>
 
-          <div className="flex items-center" style={{ marginTop: '1.2cqh', gap: '2cqw' }}>
-            <p style={{ fontSize: '1.6cqh', color: 'var(--text-muted)', margin: 0 }}>
-              Solutions existantes inadaptées : coût élevé, anglophones, connectivité stable requise.
-            </p>
-            <div className="flex items-center" style={{ gap: '1cqw', flexShrink: 0 }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '2cqh', fontWeight: 800, color: '#fff' }}>57 %</span>
-              <span style={{ fontSize: '1.6cqh', color: 'var(--text-muted)' }}>urbain</span>
-              <div style={{ width: 1, height: '1.8cqh', background: 'rgba(255,255,255,0.1)' }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '2cqh', fontWeight: 800, color: '#fff' }}>23 %</span>
-              <span style={{ fontSize: '1.6cqh', color: 'var(--text-muted)' }}>rural</span>
-            </div>
+          {/* Triple exigence — cœur de la problématique du rapport */}
+          <div className="flex justify-center" style={{ gap: '1.2cqw', marginTop: '2.2cqh' }}>
+            {[
+              { n: '01', text: 'aux exigences opérationnelles du secteur BTP' },
+              { n: '02', text: 'aux contraintes infrastructurelles du Gabon' },
+              { n: '03', text: "aux standards d'ingénierie internationaux" },
+            ].map((e, i) => (
+              <motion.div
+                key={e.n}
+                className="flex-1 flex flex-col items-center"
+                style={{
+                  padding: '1.4cqh 1.2cqw',
+                  borderRadius: '0.7cqh',
+                  background: 'rgba(0,0,0,0.35)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  gap: '0.6cqh',
+                }}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6 + i * 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '1.5cqh', fontWeight: 700, color: '#c8102e', letterSpacing: '0.15em',
+                }}>
+                  {e.n}
+                </span>
+                <span style={{ fontSize: '1.85cqh', fontWeight: 600, color: 'rgba(255,255,255,0.9)', lineHeight: 1.3 }}>
+                  {e.text}
+                </span>
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </div>
