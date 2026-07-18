@@ -141,13 +141,32 @@ export default function App() {
       else if (msg.action === 'prev') engine.prev()
       else if (msg.action === 'goto' && typeof msg.n === 'number') engine.goToSlide(msg.n)
       else if (msg.action === 'blackout') setBlackout((b) => !b)
-      else if (msg.action === 'sync') remote.send({ type: 'state', slide: engine.currentSlide, total: engine.totalSlides })
+      else if (msg.action === 'start') { setStarted(true) }
+      else if (msg.action === 'mute') sound.toggleMute()
+      else if (msg.action === 'sync') sendState()
     }
   })
-  // Diffuse l'état vers le téléphone
+  // Chrono de présentation (partagé avec le téléphone)
+  const presStart = useRef<number | null>(null)
+  if (engine.introComplete && presStart.current === null) presStart.current = Date.now()
+  const sendState = () => {
+    remote.send({
+      type: 'state',
+      slide: engine.currentSlide, total: engine.totalSlides,
+      started, muted: sound.muted, blackout,
+      elapsed: presStart.current ? Math.floor((Date.now() - presStart.current) / 1000) : 0,
+    })
+  }
+  const sendStateRef = useRef(sendState)
+  sendStateRef.current = sendState
+  // Diffuse l'état vers le téléphone à chaque changement + battement de coeur (resync chrono)
   useEffect(() => {
-    remote.send({ type: 'state', slide: engine.currentSlide, total: engine.totalSlides })
-  }, [engine.currentSlide, engine.totalSlides, remote.connected, remote])
+    sendStateRef.current()
+  }, [engine.currentSlide, started, sound.muted, blackout, remote.connected])
+  useEffect(() => {
+    const iv = setInterval(() => sendStateRef.current(), 5000)
+    return () => clearInterval(iv)
+  }, [])
   const [zoomedImg, setZoomedImg] = useState<string | null>(null)
   const [goToBuffer, setGoToBuffer] = useState('')
   const goToTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -876,8 +895,8 @@ function PresenterTimer({ started }: { started: boolean }) {
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
   const ss = String(elapsed % 60).padStart(2, '0')
 
-  const color = elapsed >= 1500 ? '#ef4444'   // 25 min → red
-    : elapsed >= 1200 ? '#f59e0b'              // 20 min → orange
+  const color = elapsed >= 900 ? '#ef4444'    // 15 min (durée officielle) → red
+    : elapsed >= 720 ? '#f59e0b'               // 12 min → orange
     : 'var(--ui-text)'
 
   return (

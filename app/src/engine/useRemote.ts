@@ -12,11 +12,15 @@ export interface RemoteMessage {
   ips?: string[]
   port?: number
   // cmd
-  action?: 'next' | 'prev' | 'goto' | 'blackout' | 'sync'
+  action?: 'next' | 'prev' | 'goto' | 'blackout' | 'sync' | 'start' | 'mute'
   n?: number
   // state
   slide?: number
   total?: number
+  started?: boolean
+  muted?: boolean
+  blackout?: boolean
+  elapsed?: number
 }
 
 // Connexion au relais WebSocket avec reconnexion automatique.
