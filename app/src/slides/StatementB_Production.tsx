@@ -20,44 +20,48 @@ export default function StatementB_Production() {
         transition={{ duration: 2.2, ease: [0.22, 1, 0.36, 1] }}
       />
 
-      {/* Pulsing dot — "live" indicator */}
-      <motion.div
-        className="absolute flex items-center justify-center"
-        style={{ left: '50%', top: '30%', transform: 'translate(-50%, -50%)' }}
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <motion.div
-          style={{
-            width: '1.2cqh', height: '1.2cqh', borderRadius: '50%',
-            background: '#c8102e',
-          }}
-          animate={{
-            boxShadow: [
-              '0 0 0 0 rgba(200,16,46,0.6)',
-              '0 0 0 12px rgba(200,16,46,0)',
-              '0 0 0 0 rgba(200,16,46,0)',
-            ],
-          }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
-        />
-        <motion.span
-          style={{
-            marginLeft: '1cqw',
-            fontSize: '1.6cqh', fontWeight: 600, letterSpacing: '0.25em',
-            textTransform: 'uppercase', color: '#c8102e',
-          }}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          Live
-        </motion.span>
-      </motion.div>
-
       {/* Main text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
+
+        {/* Kicker — pulsing "live" indicator */}
+        <motion.div
+          className="flex items-center"
+          style={{ marginBottom: '3cqh' }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <motion.div
+            style={{
+              width: '1.2cqh', height: '1.2cqh', borderRadius: '50%',
+              background: '#c8102e',
+            }}
+            animate={{
+              boxShadow: [
+                '0 0 0 0 rgba(200,16,46,0.6)',
+                '0 0 0 12px rgba(200,16,46,0)',
+                '0 0 0 0 rgba(200,16,46,0)',
+              ],
+            }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeOut' }}
+          />
+          <span style={{
+            marginLeft: '1cqw',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '1.7cqh', fontWeight: 700, letterSpacing: '0.45em',
+            textTransform: 'uppercase', color: '#c8102e',
+          }}>
+            Live
+          </span>
+        </motion.div>
+
+        {/* Filet rouge supérieur */}
+        <motion.div
+          style={{ height: 2, background: '#c8102e', marginBottom: '3.5cqh' }}
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: '14cqw', opacity: 1 }}
+          transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        />
 
         <div className="overflow-hidden">
           <motion.h1
@@ -85,9 +89,7 @@ export default function StatementB_Production() {
               fontWeight: 800,
               lineHeight: 1,
               margin: 0,
-              background: 'linear-gradient(90deg, #c8102e, #e8384f)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              color: '#c8102e',
             }}
             initial={{ y: '120%', filter: 'blur(8px)' }}
             animate={{ y: 0, filter: 'blur(0px)' }}
@@ -97,10 +99,18 @@ export default function StatementB_Production() {
           </motion.p>
         </div>
 
-        {/* Stats line — very understated */}
+        {/* Filet rouge inférieur */}
+        <motion.div
+          style={{ height: 2, background: '#c8102e', marginTop: '4cqh' }}
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: '14cqw', opacity: 1 }}
+          transition={{ duration: 1, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        />
+
+        {/* Stats line */}
         <motion.div
           className="flex items-center"
-          style={{ marginTop: '5cqh', gap: '3cqw' }}
+          style={{ marginTop: '3.5cqh', gap: '3.5cqw' }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.4, ease: [0.22, 1, 0.36, 1] }}
@@ -119,10 +129,10 @@ export default function StatementB_Production() {
                 delay={1.5 + i * 0.12}
                 style={{
                   fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '2.2cqh', fontWeight: 800, color: '#c8102e', lineHeight: 1,
+                  fontSize: '3.4cqh', fontWeight: 800, color: '#c8102e', lineHeight: 1,
                 }}
               />
-              <span style={{ fontSize: '1.8cqh', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>
+              <span style={{ fontSize: '2.2cqh', color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>
                 {s.lab}
               </span>
             </div>
