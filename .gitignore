@@ -34,11 +34,11 @@ Thumbs.db
 *.pdf
 pptx_extract
 
-# Reference images at root (not used by app)
-Ai_contexte.png
-exemple_ampoule.png
-salle-immersif.png
-screen-salle.png
+# Reference images at root (not used by app) — anchored to root only
+/Ai_contexte.png
+/exemple_ampoule.png
+/salle-immersif.png
+/screen-salle.png
 
 # Capture scripts (dev tooling, not needed in prod)
 app/capture*.mjs
