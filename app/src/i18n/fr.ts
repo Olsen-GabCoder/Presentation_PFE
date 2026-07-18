@@ -130,7 +130,7 @@ export const fr = {
       {
         badge: 'Objectif 1 · Atteint', badgeColor: '#34d399',
         title: 'Une plateforme unifiée',
-        desc: '19 domaines, de l\'initialisation à la réception. 85 000 lignes · 81 entités · 191 endpoints · 85+ pages.',
+        desc: '19 domaines, de l\'initialisation à la réception. 85 000 lignes · 81 entités · 366 endpoints · 85+ pages.',
       },
       {
         badge: 'Objectif 2 · Atteint', badgeColor: '#34d399',

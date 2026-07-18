@@ -16,7 +16,7 @@ const stack = [
       { src: '/images/logo-spring.svg', name: 'Spring Boot 4' },
       { src: '/images/logo-kotlin.svg', name: 'Kotlin 2.2' },
     ],
-    stat: '191 endpoints REST · API stateless',
+    stat: '366 endpoints REST · API stateless',
     accent: '#7c3aed',
   },
   {

@@ -107,7 +107,7 @@ export default function StatementB_Production() {
         >
           {[
             { num: 19, prefix: '', suffix: '', lab: 'domaines' },
-            { num: 191, prefix: '', suffix: '', lab: 'endpoints' },
+            { num: 366, prefix: '', suffix: '', lab: 'endpoints' },
             { num: 85, prefix: '', suffix: '+', lab: 'pages' },
             { num: 85, prefix: '~', suffix: 'K', lab: 'lignes' },
           ].map((s, i) => (

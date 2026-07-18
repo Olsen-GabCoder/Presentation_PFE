@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import BrowserMockup from '../components/BrowserMockup'
 
 const screens = [
@@ -8,7 +9,19 @@ const screens = [
   { img: '/images/screen-bareme.png', label: 'Barème des prix BTP', desc: '2 125 articles · import Excel · corps d\'état', url: 'mika.ga/bareme' },
 ]
 
+const ROTATE_MS = 7000
+
 export default function Slide10_Realisation() {
+  const [active, setActive] = useState(0)
+
+  // Rotation automatique — relancée à chaque sélection manuelle
+  useEffect(() => {
+    const t = setTimeout(() => setActive((a) => (a + 1) % screens.length), ROTATE_MS)
+    return () => clearTimeout(t)
+  }, [active])
+
+  const current = screens[active]
+
   return (
     <div className="relative w-full h-full overflow-hidden" style={{ background: '#141416' }}>
 
@@ -44,65 +57,104 @@ export default function Slide10_Realisation() {
           </div>
         </div>
 
-        {/* Screenshots — 2x2 grid with browser mockups */}
-        <div
-          className="flex-1"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gridTemplateRows: 'repeat(2, 1fr)',
-            gap: '1cqh',
-          }}
-        >
-          {screens.map((s, i) => (
-            <motion.div
-              key={i}
-              className="relative group cursor-default"
-              initial={{ opacity: 0, y: 20, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.5 + i * 0.12, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <BrowserMockup url={s.url}>
-                {/* Screenshot image */}
-                <img
-                  src={s.img}
-                  alt={s.label}
-                  className="transition-transform duration-700 group-hover:scale-105"
+        {/* Rail + grande capture */}
+        <div className="flex-1 flex" style={{ gap: '2cqw', minHeight: 0 }}>
+
+          {/* Rail latéral */}
+          <div className="flex flex-col justify-center" style={{ width: '22cqw', flexShrink: 0, gap: '1.2cqh' }}>
+            {screens.map((s, i) => {
+              const isActive = i === active
+              return (
+                <motion.button
+                  key={i}
+                  onClick={(e) => { e.stopPropagation(); setActive(i) }}
+                  className="text-left cursor-pointer"
                   style={{
-                    width: '100%', height: '100%', objectFit: 'cover',
-                    objectPosition: 'top left',
+                    background: isActive ? 'rgba(200,16,46,0.10)' : 'transparent',
+                    border: 'none',
+                    borderLeft: isActive ? '3px solid #c8102e' : '3px solid rgba(255,255,255,0.12)',
+                    borderRadius: '0 0.6cqh 0.6cqh 0',
+                    padding: '1.2cqh 1cqw',
+                    transition: 'background 0.3s, border-color 0.3s',
                   }}
-                />
-
-                {/* Bottom gradient */}
-                <div className="absolute inset-0" style={{
-                  background: 'linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.65) 100%)',
-                }} />
-
-                {/* Label */}
-                <div className="absolute bottom-0 left-0 right-0" style={{ padding: '1.5cqh 1.5cqw' }}>
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
                   <p style={{
-                    fontSize: '2cqh', fontWeight: 700, color: '#fff',
-                    margin: 0, lineHeight: 1.15,
-                    textShadow: '0 2px 8px rgba(0,0,0,0.35)',
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.15em',
+                    color: isActive ? '#c8102e' : 'var(--text-ghost)',
+                    margin: 0,
+                  }}>
+                    0{i + 1}
+                  </p>
+                  <p style={{
+                    fontSize: '2.2cqh', fontWeight: 700,
+                    color: isActive ? '#fff' : 'var(--text-secondary)',
+                    margin: 0, marginTop: '0.3cqh', lineHeight: 1.15,
                   }}>
                     {s.label}
                   </p>
                   <p style={{
-                    fontSize: '1.6cqh', color: 'rgba(255,255,255,0.6)',
+                    fontSize: '1.7cqh', color: isActive ? 'var(--text-secondary)' : 'var(--text-ghost)',
                     margin: 0, marginTop: '0.3cqh',
                   }}>
                     {s.desc}
                   </p>
-                </div>
-              </BrowserMockup>
-            </motion.div>
-          ))}
+                  {/* Barre de progression du cycle auto */}
+                  {isActive && (
+                    <motion.div
+                      key={`prog-${active}`}
+                      style={{
+                        height: 2, background: 'rgba(200,16,46,0.6)',
+                        marginTop: '0.8cqh', transformOrigin: 'left', borderRadius: 1,
+                      }}
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: ROTATE_MS / 1000, ease: 'linear' }}
+                    />
+                  )}
+                </motion.button>
+              )
+            })}
+          </div>
+
+          {/* Grande capture */}
+          <motion.div
+            className="flex-1 relative"
+            style={{ minWidth: 0 }}
+            initial={{ opacity: 0, y: 20, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.7, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                className="absolute inset-0"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <BrowserMockup url={current.url}>
+                  <img
+                    src={current.img}
+                    alt={current.label}
+                    style={{
+                      width: '100%', height: '100%', objectFit: 'cover',
+                      objectPosition: 'top left',
+                    }}
+                  />
+                </BrowserMockup>
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
         </div>
 
         {/* Footer */}
         <motion.p
-          style={{ fontSize: '1.7cqh', color: 'rgba(255,255,255,0.45)', margin: 0, marginTop: '1cqh', textAlign: 'center', fontStyle: 'italic' }}
+          style={{ fontSize: '1.7cqh', color: 'var(--text-muted)', margin: 0, marginTop: '1.2cqh', textAlign: 'center', fontStyle: 'italic' }}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
         >
           PWA bilingue FR/EN · Salle MIKA · Messagerie · Assistant IA · Mobile responsive

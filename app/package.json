@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:lan": "vite --host",
+    "remote": "node remote-server.mjs",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
@@ -15,13 +17,16 @@
     "framer-motion": "^12.42.0",
     "lucide-react": "^1.21.0",
     "playwright": "^1.61.1",
+    "qrcode": "^1.5.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "tailwindcss": "^4.3.1",
-    "three": "^0.185.0"
+    "three": "^0.185.0",
+    "ws": "^8.21.1"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.185.0",

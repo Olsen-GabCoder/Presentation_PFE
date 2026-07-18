@@ -38,14 +38,15 @@ export default function Slide05_EtatArt() {
         style={{
           backgroundImage: 'url(/images/mika-panneau-chantier.jpg)',
           backgroundSize: 'cover', backgroundPosition: 'center 20%',
-          opacity: 0.14,
+          opacity: 0.07,
+          filter: 'saturate(0.6)',
         }}
         initial={{ scale: 1.06, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.14 }}
+        animate={{ scale: 1, opacity: 0.07 }}
         transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
       />
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.1) 25%, rgba(0,0,0,0.1) 70%, rgba(0,0,0,0.35) 100%)',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 25%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.5) 100%)',
       }} />
 
       <motion.div

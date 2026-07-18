@@ -105,7 +105,7 @@ export default function Slide12_MikaAssistant() {
               src="/images/screen-assistant-open.png"
               alt="Mika Assistant ouvert"
               className="transition-transform duration-700 group-hover:scale-105"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top left' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top right' }}
             />
             <div className="absolute inset-0" style={{
               background: 'linear-gradient(180deg, transparent 70%, rgba(0,0,0,0.35) 100%)',

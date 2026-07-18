@@ -14,6 +14,8 @@ import LightFixture from './components/LightFixture'
 import WarmLighting from './components/WarmLighting'
 import DarkOverlay from './components/DarkOverlay'
 import CursorSpotlight from './components/CursorSpotlight'
+import RemoteQR from './components/RemoteQR'
+import { useRemoteSocket } from './engine/useRemote'
 import Slide01_Cover from './slides/Slide01_Cover'
 import Slide02_Sommaire from './slides/Slide02_Sommaire'
 import StatementA_Chiffre from './slides/StatementA_Chiffre'
@@ -121,6 +123,25 @@ export default function App() {
 
   const [blackout, setBlackout] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+
+  // ── Télécommande smartphone — commandes entrantes + URL du QR code ──
+  const [remoteUrl, setRemoteUrl] = useState<string | null>(null)
+  const remote = useRemoteSocket((msg) => {
+    if (msg.type === 'hello' && msg.ips?.length) {
+      const port = window.location.port || '5173'
+      setRemoteUrl(`http://${msg.ips[0]}:${port}/?remote=1`)
+    } else if (msg.type === 'cmd') {
+      if (msg.action === 'next') engine.next()
+      else if (msg.action === 'prev') engine.prev()
+      else if (msg.action === 'goto' && typeof msg.n === 'number') engine.goToSlide(msg.n)
+      else if (msg.action === 'blackout') setBlackout((b) => !b)
+      else if (msg.action === 'sync') remote.send({ type: 'state', slide: engine.currentSlide, total: engine.totalSlides })
+    }
+  })
+  // Diffuse l'état vers le téléphone
+  useEffect(() => {
+    remote.send({ type: 'state', slide: engine.currentSlide, total: engine.totalSlides })
+  }, [engine.currentSlide, engine.totalSlides, remote.connected, remote])
   const [zoomedImg, setZoomedImg] = useState<string | null>(null)
   const [goToBuffer, setGoToBuffer] = useState('')
   const goToTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -134,16 +155,21 @@ export default function App() {
       sound.playSwitch()
       prevLights.current = engine.lightsOn
     }
-    // Page turn sound — when pulling starts
-    if (engine.characterPhase === 'pulling' && prevPhase.current !== 'pulling') {
-      sound.playPageTurn()
-    }
     // Celebrate sound
     if (engine.characterPhase === 'celebrating' && prevPhase.current !== 'celebrating') {
       sound.playCelebrate()
     }
     prevPhase.current = engine.characterPhase
   }, [engine.characterPhase, engine.lightsOn, sound])
+
+  // Page turn sound — au début de chaque transition, quel que soit son type
+  const prevTransitioning = useRef(false)
+  useEffect(() => {
+    if (engine.isTransitioning && !prevTransitioning.current && !engine.isFinalTransition) {
+      sound.playPageTurn()
+    }
+    prevTransitioning.current = engine.isTransitioning
+  }, [engine.isTransitioning, engine.isFinalTransition, sound])
 
   // Preload all slide images on mount — decode happens while intro plays
   useEffect(() => {
@@ -319,7 +345,7 @@ export default function App() {
 
             {/* Lighting — dark slides: ember ambient glow */}
             {engine.currentSlide > 0 && (
-              <WarmLighting lightsOn intensity={0.35} originX="82%" originY="3%" dustCount={6} />
+              <WarmLighting lightsOn intensity={0.18} originX="93%" originY="3%" dustCount={6} />
             )}
 
             {/* Contact point glow */}
@@ -450,6 +476,7 @@ export default function App() {
         isPulling={engine.characterPhase === 'pullingCord'}
         pulse={engine.emberPulse}
         showCord={engine.currentSlide === 0}
+        left={engine.currentSlide === 0 ? '81%' : '93%'}
       />
 
       {/* ═══ GROUND LINE ═══ */}
@@ -756,6 +783,20 @@ export default function App() {
                 background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.6) 100%)',
               }}
             />
+
+            {/* QR télécommande — coin bas droit */}
+            {remoteUrl && (
+              <motion.div
+                className="absolute"
+                style={{ bottom: '3cqh', right: '2.5cqw' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 1 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <RemoteQR url={remoteUrl} />
+              </motion.div>
+            )}
 
             {/* Logos */}
             <motion.div

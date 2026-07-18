@@ -170,11 +170,13 @@ export function usePresentationEngine(startSignal = true) {
     }
 
     // Determine transition type from the map
-    const tType = TRANSITION_MAP[currentSlideRef.current] ?? 'page-turn'
+    // 'fade' est réservé à l'arrivée sur la dernière slide : en marche arrière, page-turn classique
+    let tType = TRANSITION_MAP[currentSlideRef.current] ?? 'page-turn'
+    if (tType === 'fade' && targetIndex !== TOTAL_SLIDES - 1) tType = 'page-turn'
     setTransitionType(tType)
 
     // ── FADE — final slide ──
-    if (tType === 'fade' || targetIndex === TOTAL_SLIDES - 1) {
+    if (targetIndex === TOTAL_SLIDES - 1) {
       setTransitionType('fade')
       setIsFinalTransition(true)
       setCharacterPhase('celebrating')

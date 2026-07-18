@@ -13,9 +13,9 @@
   /* Text hierarchy — boosted for projectors */
   --text-bright: rgba(255,255,255,0.95);
   --text-primary: rgba(255,255,255,0.88);
-  --text-secondary: rgba(255,255,255,0.70);
-  --text-muted: rgba(255,255,255,0.55);
-  --text-ghost: rgba(255,255,255,0.40);
+  --text-secondary: rgba(255,255,255,0.80);
+  --text-muted: rgba(255,255,255,0.68);
+  --text-ghost: rgba(255,255,255,0.48);
 
   /* Surface & borders — boosted */
   --surface-card: rgba(255,255,255,0.05);

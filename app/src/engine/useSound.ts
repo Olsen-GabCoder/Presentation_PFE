@@ -1,6 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from 'react'
 
-const VOLUME = 0.15
+const VOLUME = 0.35
 
 function createAudio(src: string, volume = VOLUME): HTMLAudioElement {
   const a = new Audio(src)
@@ -24,7 +24,7 @@ export function useSound() {
     if (initialized.current) return
     initialized.current = true
     switchClick.current = createAudio('/sounds/switch-click.mp3', VOLUME)
-    pageTurn.current = createAudio('/sounds/page-turn.mp3', VOLUME)
+    pageTurn.current = createAudio('/sounds/page-turn.wav', VOLUME)
     celebrate.current = createAudio('/sounds/celebrate.mp3', VOLUME * 0.8)
   }, [])
 
