@@ -39,7 +39,7 @@ export default function Slide05_EtatArt() {
           backgroundImage: 'url(/images/mika-panneau-chantier.jpg)',
           backgroundSize: 'cover', backgroundPosition: 'center 20%',
           opacity: 0.07,
-          filter: 'saturate(0.6)',
+          filter: 'grayscale(1)',
         }}
         initial={{ scale: 1.06, opacity: 0 }}
         animate={{ scale: 1, opacity: 0.07 }}
