@@ -534,7 +534,7 @@ export default function App() {
             key={SECTION_MAP[engine.currentSlide]}
             className="absolute select-none pointer-events-none"
             style={{
-              top: '2.5cqh', left: '6cqw', zIndex: 55,
+              top: '0.9cqh', left: '6cqw', zIndex: 55,
             }}
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
@@ -542,13 +542,19 @@ export default function App() {
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <span style={{
-              fontSize: '1.4cqh',
-              fontWeight: 600,
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.30)',
+              display: 'inline-flex', alignItems: 'center', gap: '0.8cqw',
             }}>
-              {SECTION_MAP[engine.currentSlide]}
+              <span style={{ width: '1.4cqw', height: 2, background: '#c8102e', flexShrink: 0 }} />
+              <span style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '1.4cqh',
+                fontWeight: 700,
+                letterSpacing: '0.25em',
+                textTransform: 'uppercase',
+                color: 'rgba(255,255,255,0.6)',
+              }}>
+                {SECTION_MAP[engine.currentSlide]}
+              </span>
             </span>
           </motion.div>
         )}
