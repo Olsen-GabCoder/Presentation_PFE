@@ -2,85 +2,109 @@ import { motion } from 'framer-motion'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const CRITERIA = [
-  { label: 'Exploitation',  win: 'PaaS géré — deploy sur git push, zéro serveur à administrer', lose: 'IAM, VPC, réseau : un métier à part entière' },
-  { label: 'Équipe',        win: 'Compatible « 1 développeur » — focus sur le produit', lose: 'Exige un profil DevOps dédié' },
-  { label: 'Coût',          win: 'Facturation simple, adaptée à une PME', lose: 'Coûts difficiles à prévoir et à maîtriser' },
-  { label: 'Besoin réel',   win: 'PostgreSQL géré + web service + HTTPS : tout y est', lose: 'Puissance surdimensionnée pour ce stade' },
-]
+// Schéma : ce que le développeur porte — pile légère (Render) vs pile qui déborde (AWS/Azure)
+const RENDER_BLOCKS = ['git push → déploiement automatique', 'PostgreSQL géré · HTTPS inclus', 'facturation simple, adaptée PME']
+const AWS_BLOCKS = ['puissance surdimensionnée', 'coûts imprévisibles', 'profil DevOps dédié', 'VPC · réseau', 'IAM']
 
 export default function Annexe_A6_Render() {
   return (
-    <div className="w-full h-full flex flex-col" style={{ padding: '2cqh 5cqw 3cqh' }}>
+    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '0 8cqw 4cqh' }}>
 
-      <div className="flex" style={{ gap: '2cqw', marginBottom: '1.5cqh' }}>
-        <div style={{ width: '14cqw' }} />
-        <motion.div
-          className="flex-1 flex items-center justify-center"
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2, ease }}
-          style={{
-            padding: '1.2cqh 0', borderRadius: '0.8cqh',
-            background: 'rgba(200,16,46,0.12)', border: '1px solid rgba(200,16,46,0.55)', gap: '1cqw',
-          }}
-        >
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, color: '#c8102e', letterSpacing: '0.2em' }}>RETENU</span>
-          <span style={{ fontSize: '2.4cqh', fontWeight: 800, color: '#fff' }}>Render</span>
-        </motion.div>
-        <motion.div
-          className="flex-1 flex items-center justify-center"
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3, ease }}
-          style={{
-            padding: '1.2cqh 0', borderRadius: '0.8cqh',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', gap: '1cqw',
-          }}
-        >
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.2em' }}>ÉCARTÉ</span>
-          <span style={{ fontSize: '2.4cqh', fontWeight: 800, color: 'rgba(255,255,255,0.55)' }}>AWS / Azure</span>
-        </motion.div>
-      </div>
+      <div className="flex items-end" style={{ gap: '6cqw', height: '58cqh' }}>
 
-      <div className="flex-1 flex flex-col justify-center" style={{ gap: '0.4cqh' }}>
-        {CRITERIA.map((c, i) => (
-          <motion.div
-            key={c.label}
-            className="flex items-center"
-            initial={{ opacity: 0, x: 25 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 + i * 0.12, ease }}
-            style={{ gap: '2cqw', padding: '1.6cqh 0', borderBottom: i < CRITERIA.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}
+        {/* ── Render : pile légère ── */}
+        <div className="flex-1 flex flex-col justify-end" style={{ height: '100%' }}>
+          <motion.span
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2, ease }}
+            style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700,
+              letterSpacing: '0.25em', color: '#c8102e', marginBottom: '1.5cqh',
+            }}
           >
-            <span style={{
-              width: '14cqw', flexShrink: 0,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '1.6cqh', fontWeight: 700, color: 'rgba(255,255,255,0.55)',
-              textTransform: 'uppercase', letterSpacing: '0.08em',
-            }}>
-              {c.label}
-            </span>
-            <span className="flex-1" style={{ fontSize: '1.9cqh', fontWeight: 700, color: '#fff', textAlign: 'center', lineHeight: 1.4 }}>
-              {c.win}
-            </span>
-            <span className="flex-1" style={{ fontSize: '1.9cqh', fontWeight: 500, color: 'rgba(255,255,255,0.45)', textAlign: 'center', lineHeight: 1.4 }}>
-              {c.lose}
-            </span>
+            RETENU · RENDER
+          </motion.span>
+          <div className="flex flex-col" style={{ gap: '0.8cqh' }}>
+            {RENDER_BLOCKS.map((b, i) => (
+              <motion.div
+                key={b}
+                className="flex items-center justify-center"
+                initial={{ opacity: 0, y: -25 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 + (RENDER_BLOCKS.length - 1 - i) * 0.15, ease }}
+                style={{
+                  padding: '1.7cqh 1cqw', borderRadius: '0.7cqh', textAlign: 'center',
+                  border: '1px solid rgba(200,16,46,0.6)', background: 'rgba(200,16,46,0.10)',
+                }}
+              >
+                <span style={{ fontSize: '1.8cqh', fontWeight: 700, color: '#fff' }}>{b}</span>
+              </motion.div>
+            ))}
+          </div>
+          {/* Socle : le dev */}
+          <motion.div
+            className="flex items-center justify-center"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.4, ease }}
+            style={{
+              marginTop: '1.2cqh', padding: '1.6cqh 0', borderRadius: '0.7cqh', gap: '1cqw',
+              background: '#c8102e',
+            }}
+          >
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.6cqh', fontWeight: 700, letterSpacing: '0.2em', color: '#fff' }}>1 DEV</span>
+            <span style={{ fontSize: '1.6cqh', fontWeight: 600, color: 'rgba(255,255,255,0.85)' }}>— focus produit</span>
           </motion.div>
-        ))}
+        </div>
+
+        {/* ── AWS/Azure : pile qui déborde ── */}
+        <div className="flex-1 flex flex-col justify-end" style={{ height: '100%' }}>
+          <motion.span
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.3, ease }}
+            style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700,
+              letterSpacing: '0.25em', color: 'rgba(255,255,255,0.45)', marginBottom: '1.5cqh',
+            }}
+          >
+            ÉCARTÉ · AWS / AZURE
+          </motion.span>
+          <div className="flex flex-col" style={{ gap: '0.8cqh' }}>
+            {AWS_BLOCKS.map((b, i) => (
+              <motion.div
+                key={b}
+                className="flex items-center justify-center"
+                initial={{ opacity: 0, y: -25, rotate: 0 }}
+                animate={{ opacity: 1, y: 0, rotate: i % 2 === 0 ? -1.6 : 1.8 }}
+                transition={{ duration: 0.5, delay: 1.1 + (AWS_BLOCKS.length - 1 - i) * 0.15, ease }}
+                style={{
+                  padding: '1.5cqh 1cqw', borderRadius: '0.7cqh', textAlign: 'center',
+                  border: '1px dashed rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.03)',
+                }}
+              >
+                <span style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.6)' }}>{b}</span>
+              </motion.div>
+            ))}
+          </div>
+          <motion.div
+            className="flex items-center justify-center"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 1, ease }}
+            style={{
+              marginTop: '1.2cqh', padding: '1.6cqh 0', borderRadius: '0.7cqh', gap: '1cqw',
+              border: '1px solid rgba(255,255,255,0.25)', background: 'rgba(255,255,255,0.05)',
+            }}
+          >
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.6cqh', fontWeight: 700, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.6)' }}>1 DEV</span>
+            <span style={{ fontSize: '1.6cqh', fontWeight: 600, color: 'rgba(255,255,255,0.45)' }}>— un métier d’ops à part entière</span>
+          </motion.div>
+        </div>
       </div>
 
-      <motion.div
-        className="flex items-center"
-        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1, ease }}
+      {/* Note */}
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 2.2, ease }}
         style={{
-          gap: '1.5cqw', padding: '1.6cqh 2cqw', borderRadius: '0.8cqh',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+          textAlign: 'center', margin: '3.5cqh 0 0', fontSize: '1.6cqh', fontWeight: 500,
+          color: 'rgba(255,255,255,0.55)',
         }}
       >
-        <div style={{ width: 3, alignSelf: 'stretch', background: '#c8102e', borderRadius: 2 }} />
-        <p style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', margin: 0, lineHeight: 1.5 }}>
-          Le bon outil pour le bon stade : Render héberge la production réelle depuis mars 2026.
-          L’architecture 3-tiers reste <b style={{ color: '#fff' }}>portable</b> — une migration cloud ultérieure
-          resterait possible <b style={{ color: '#fff' }}>sans réécriture</b>.
-        </p>
-      </motion.div>
+        Le bon outil pour le bon stade : production réelle sur Render depuis mars 2026 · architecture 3-tiers portable — migration cloud possible sans réécriture.
+      </motion.p>
     </div>
   )
 }
