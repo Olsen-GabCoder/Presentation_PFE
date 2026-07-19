@@ -11,8 +11,8 @@ export interface RemoteMessage {
   // hello
   ips?: string[]
   port?: number
-  // cmd
-  action?: 'next' | 'prev' | 'goto' | 'blackout' | 'sync' | 'start' | 'mute'
+  // cmd — 'annex' : n = index de l'annexe FAQ à afficher, -1 pour masquer
+  action?: 'next' | 'prev' | 'goto' | 'blackout' | 'sync' | 'start' | 'mute' | 'annex'
   n?: number
   // state
   slide?: number
@@ -21,6 +21,7 @@ export interface RemoteMessage {
   muted?: boolean
   blackout?: boolean
   elapsed?: number
+  annex?: number | null
 }
 
 // Connexion au relais WebSocket avec reconnexion automatique.

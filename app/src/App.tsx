@@ -16,6 +16,7 @@ import DarkOverlay from './components/DarkOverlay'
 import CursorSpotlight from './components/CursorSpotlight'
 import RemoteQR from './components/RemoteQR'
 import { useRemoteSocket } from './engine/useRemote'
+import AnnexeOverlay from './annexes/AnnexeOverlay'
 import Slide01_Cover from './slides/Slide01_Cover'
 import Slide02_Sommaire from './slides/Slide02_Sommaire'
 import StatementA_Chiffre from './slides/StatementA_Chiffre'
@@ -123,6 +124,8 @@ export default function App() {
 
   const [blackout, setBlackout] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  // Annexe FAQ affichée par-dessus la slide (index dans ANNEXES, null = masquée)
+  const [annex, setAnnex] = useState<number | null>(null)
 
   // ── Télécommande smartphone — commandes entrantes + URL du QR code ──
   const [remoteUrl, setRemoteUrl] = useState<string | null>(null)
@@ -143,6 +146,7 @@ export default function App() {
       else if (msg.action === 'blackout') setBlackout((b) => !b)
       else if (msg.action === 'start') { setStarted(true) }
       else if (msg.action === 'mute') sound.toggleMute()
+      else if (msg.action === 'annex') setAnnex(typeof msg.n === 'number' && msg.n >= 0 ? msg.n : null)
       else if (msg.action === 'sync') sendState()
     }
   })
@@ -153,7 +157,7 @@ export default function App() {
     remote.send({
       type: 'state',
       slide: engine.currentSlide, total: engine.totalSlides,
-      started, muted: sound.muted, blackout,
+      started, muted: sound.muted, blackout, annex,
       elapsed: presStart.current ? Math.floor((Date.now() - presStart.current) / 1000) : 0,
     })
   }
@@ -162,7 +166,7 @@ export default function App() {
   // Diffuse l'état vers le téléphone à chaque changement + battement de coeur (resync chrono)
   useEffect(() => {
     sendStateRef.current()
-  }, [engine.currentSlide, started, sound.muted, blackout, remote.connected])
+  }, [engine.currentSlide, started, sound.muted, blackout, annex, remote.connected])
   useEffect(() => {
     const iv = setInterval(() => sendStateRef.current(), 5000)
     return () => clearInterval(iv)
@@ -252,6 +256,7 @@ export default function App() {
         setShowHelp(false)
         setBlackout(false)
         setZoomedImg(null)
+        setAnnex(null)
         setGoToBuffer('')
       } else if (blackout && ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft', ' '].includes(e.key)) {
         setBlackout(false)
@@ -665,6 +670,9 @@ export default function App() {
         totalSlides={engine.totalSlides}
         visible={engine.introComplete}
       />
+
+      {/* ═══ ANNEXE FAQ — pilotée depuis la télécommande ═══ */}
+      <AnnexeOverlay annex={annex} onClose={() => setAnnex(null)} />
 
       {/* ═══ BLACKOUT OVERLAY — press B ═══ */}
       <AnimatePresence>

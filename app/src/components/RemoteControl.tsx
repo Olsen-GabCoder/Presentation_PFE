@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Moon, Volume2, VolumeX, LayoutGrid, Play, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Moon, Volume2, VolumeX, LayoutGrid, Play, X, MessageCircleQuestion } from 'lucide-react'
 import { useRemoteSocket } from '../engine/useRemote'
 import { useWakeLock } from '../engine/useWakeLock'
 import { useT } from '../i18n'
+import { ANNEXES } from '../annexes'
 
 const TOTAL_SECONDS = 900 // 15 minutes
 
@@ -45,6 +46,9 @@ export default function RemoteControl() {
   const [muted, setMuted] = useState(false)
   const [blackout, setBlackout] = useState(false)
   const [gridOpen, setGridOpen] = useState(false)
+  const [faqOpen, setFaqOpen] = useState(false)
+  // Annexe actuellement projetée sur l'écran (null = aucune)
+  const [annexActive, setAnnexActive] = useState<number | null>(null)
 
   // Chrono local resynchronisé par le battement de coeur de l'écran
   const [elapsed, setElapsed] = useState(0)
@@ -57,6 +61,7 @@ export default function RemoteControl() {
       if (typeof msg.started === 'boolean') setStarted(msg.started)
       if (typeof msg.muted === 'boolean') setMuted(msg.muted)
       if (typeof msg.blackout === 'boolean') setBlackout(msg.blackout)
+      setAnnexActive(typeof msg.annex === 'number' ? msg.annex : null)
       if (typeof msg.elapsed === 'number') {
         lastSync.current = { elapsed: msg.elapsed, at: Date.now() }
         setElapsed(msg.elapsed)
@@ -87,6 +92,13 @@ export default function RemoteControl() {
     if (navigator.vibrate) navigator.vibrate(15)
     send({ type: 'cmd', action: 'goto', n })
     setGridOpen(false)
+  }
+  // Projette (n ≥ 0) ou masque (n = -1) une annexe FAQ sur l'écran
+  const showAnnex = (n: number) => {
+    if (navigator.vibrate) navigator.vibrate(15)
+    send({ type: 'cmd', action: 'annex', n })
+    setAnnexActive(n >= 0 ? n : null)
+    setFaqOpen(false)
   }
 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0')
@@ -265,6 +277,11 @@ export default function RemoteControl() {
             icon: <Moon style={{ width: 22, height: 22 }} strokeWidth={2} />,
             onTap: () => cmd('blackout'),
           },
+          {
+            key: 'faq', label: 'FAQ jury', active: faqOpen || annexActive !== null,
+            icon: <MessageCircleQuestion style={{ width: 22, height: 22 }} strokeWidth={2} />,
+            onTap: () => setFaqOpen(true),
+          },
         ].map((b) => (
           <motion.button
             key={b.key}
@@ -284,6 +301,98 @@ export default function RemoteControl() {
           </motion.button>
         ))}
       </div>
+
+      {/* Bandeau annexe projetée — masquage en un geste */}
+      <AnimatePresence>
+        {annexActive !== null && ANNEXES[annexActive] && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={() => showAnnex(-1)}
+            className="flex items-center justify-between"
+            style={{
+              margin: '0 16px 16px', padding: '12px 16px', borderRadius: 14,
+              border: '1px solid rgba(200,16,46,0.6)', background: 'rgba(200,16,46,0.18)',
+              color: '#fff', cursor: 'pointer', gap: 10,
+            }}
+          >
+            <span style={{ fontSize: 13, fontWeight: 600, textAlign: 'left' }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", color: '#ff8896', fontWeight: 700 }}>
+                {ANNEXES[annexActive].id}
+              </span>
+              {' '}projetée à l’écran
+            </span>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#ff8896', flexShrink: 0 }}>
+              Masquer
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
+
+      {/* Panneau FAQ jury — annexes projetables */}
+      <AnimatePresence>
+        {faqOpen && (
+          <motion.div
+            className="fixed inset-0 flex flex-col"
+            style={{ background: '#0a0a0c', zIndex: 10 }}
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center justify-between" style={{ padding: '16px 18px' }}>
+              <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)' }}>
+                FAQ jury — projeter une annexe
+              </span>
+              <button
+                onClick={() => setFaqOpen(false)}
+                style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: 6 }}
+              >
+                <X style={{ width: 24, height: 24 }} />
+              </button>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 14px 20px' }}>
+              {[...new Set(ANNEXES.filter((a) => a.component).map((a) => a.cat))].map((cat) => (
+                <div key={cat}>
+                  <p style={{
+                    fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 700,
+                    letterSpacing: '0.2em', textTransform: 'uppercase', color: '#c8102e',
+                    margin: '14px 4px 8px',
+                  }}>
+                    {cat}
+                  </p>
+                  {ANNEXES.map((a, i) => {
+                    if (a.cat !== cat || !a.component) return null
+                    const active = i === annexActive
+                    return (
+                      <button
+                        key={a.id}
+                        onClick={() => showAnnex(active ? -1 : i)}
+                        className="w-full flex items-center"
+                        style={{
+                          padding: '13px 14px', marginBottom: 6, borderRadius: 12, gap: 12,
+                          border: active ? '1px solid rgba(200,16,46,0.6)' : '1px solid rgba(255,255,255,0.08)',
+                          background: active ? 'rgba(200,16,46,0.15)' : 'rgba(255,255,255,0.04)',
+                          color: '#fff', cursor: 'pointer', textAlign: 'left',
+                        }}
+                      >
+                        <span style={{
+                          fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700,
+                          color: active ? '#ff8896' : 'rgba(255,255,255,0.4)', width: 26, flexShrink: 0,
+                        }}>
+                          {a.id}
+                        </span>
+                        <span style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.35 }}>{a.question}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Panneau accès direct aux slides */}
       <AnimatePresence>
