@@ -127,9 +127,12 @@ export default function RemoteControl() {
       <div className="flex items-center justify-between" style={{ padding: '14px 18px' }}>
         <div className="flex items-center" style={{ gap: 10 }}>
           <img src="/mika-logo.png" alt="MIKA" style={{ height: 20, objectFit: 'contain' }} />
-          <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
-            Télécommande
-          </span>
+          {/* Le libellé disparaît une fois la présentation lancée — place à l'indicateur de rythme */}
+          {!started && (
+            <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
+              Télécommande
+            </span>
+          )}
         </div>
         <div className="flex items-center" style={{ gap: 12 }}>
           {drift && (
