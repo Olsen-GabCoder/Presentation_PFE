@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion'
 
 const sections = [
-  { num: '01', title: 'Problématique',  sub: 'BTP & fracture numérique',    img: '/images/sommaire-1.jpg' },
-  { num: '02', title: 'Contexte',       sub: 'MIKA Services & le besoin',   img: '/images/sommaire-2.jpg' },
-  { num: '03', title: 'État de l\'art', sub: 'Positionnement & gap',        img: '/images/sommaire-3.jpg' },
-  { num: '04', title: 'Méthodologie',   sub: '10 vagues itératives',        img: '/images/sommaire-4.jpg' },
-  { num: '05', title: 'Architecture',   sub: 'Conception & sécurité',       img: '/images/sommaire-5.jpg' },
-  { num: '06', title: 'Réalisation',    sub: '19 modules clés',             img: '/images/sommaire-6.jpg' },
-  { num: '07', title: 'Bilan',          sub: 'Validation & perspectives',   img: '/images/sommaire-7.jpg' },
+  { num: '01', title: 'Problématique',  sub: 'BTP & fracture numérique' },
+  { num: '02', title: 'Contexte',       sub: 'MIKA Services & le besoin' },
+  { num: '03', title: 'État de l\'art', sub: 'Positionnement & gap' },
+  { num: '04', title: 'Méthodologie',   sub: '10 vagues itératives' },
+  { num: '05', title: 'Architecture',   sub: 'Conception & sécurité' },
+  { num: '06', title: 'Réalisation',    sub: '19 modules clés' },
+  { num: '07', title: 'Bilan',          sub: 'Validation & perspectives' },
 ]
 
 export default function Slide02_Sommaire() {
@@ -21,19 +21,20 @@ export default function Slide02_Sommaire() {
           backgroundImage: 'url(/images/hero-btp.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center 40%',
-          opacity: 0.24,
+          filter: 'grayscale(1)',
+          opacity: 0.16,
         }}
         initial={{ scale: 1.08, opacity: 0 }}
-        animate={{ scale: 1, opacity: 0.24 }}
+        animate={{ scale: 1, opacity: 0.16 }}
         transition={{ duration: 2.5, ease: [0.22, 1, 0.36, 1] }}
       />
 
       {/* Dark gradient overlays */}
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(90deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%)',
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.5) 100%)',
       }} />
       <div className="absolute inset-0" style={{
-        background: 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.35) 100%)',
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.45) 100%)',
       }} />
 
       {/* Red accent — left edge */}
@@ -58,7 +59,8 @@ export default function Slide02_Sommaire() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               style={{
-                fontSize: '1.2cqh', fontWeight: 600, letterSpacing: '0.3em',
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '1.7cqh', fontWeight: 700, letterSpacing: '0.45em',
                 textTransform: 'uppercase', color: '#c8102e', margin: 0, marginBottom: '2cqh',
               }}
             >
@@ -99,9 +101,7 @@ export default function Slide02_Sommaire() {
                 style={{
                   fontSize: '6cqh', fontWeight: 800, lineHeight: 1.05,
                   letterSpacing: '-0.035em', margin: 0,
-                  background: 'linear-gradient(90deg, #c8102e 0%, #e8384f 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#c8102e',
                 }}
               >
                 soutenance
@@ -128,8 +128,8 @@ export default function Slide02_Sommaire() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                padding: '1.3cqh 0',
-                borderBottom: i < 6 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                padding: '1.5cqh 0',
+                borderBottom: i < 6 ? '1px solid rgba(255,255,255,0.12)' : 'none',
               }}
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -166,47 +166,17 @@ export default function Slide02_Sommaire() {
               {/* Text */}
               <div className="relative" style={{ flex: 1 }}>
                 <p style={{
-                  fontSize: '2cqh', fontWeight: 700, color: '#fff',
+                  fontSize: '2.3cqh', fontWeight: 700, color: '#fff',
                   margin: 0, lineHeight: 1.2,
                 }}>
                   {s.title}
                 </p>
                 <p style={{
-                  fontSize: '1.1cqh', color: 'rgba(255,255,255,0.55)',
-                  margin: 0, marginTop: '0.2cqh', fontWeight: 500,
+                  fontSize: '1.5cqh', color: 'rgba(255,255,255,0.65)',
+                  margin: 0, marginTop: '0.3cqh', fontWeight: 500,
                 }}>
                   {s.sub}
                 </p>
-              </div>
-
-              {/* Section thumbnail */}
-              <div
-                className="relative overflow-hidden"
-                style={{
-                  width: '8cqw',
-                  height: '4.5cqh',
-                  borderRadius: '0.5cqh',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  flexShrink: 0,
-                }}
-              >
-                <img
-                  src={s.img}
-                  alt={s.title}
-                  className="transition-transform duration-500 group-hover:scale-110"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    opacity: 0.5,
-                  }}
-                />
-                <div
-                  className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-0"
-                  style={{
-                    background: 'linear-gradient(90deg, rgba(20,20,22,0.5) 0%, transparent 100%)',
-                  }}
-                />
               </div>
             </motion.div>
           ))}
