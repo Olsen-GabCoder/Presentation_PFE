@@ -2,70 +2,80 @@ import { motion } from 'framer-motion'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const CHAIN = [
-  { kicker: 'ACCÈS', title: 'Contrôlé par la plateforme', detail: 'On n’entre pas dans une Salle MIKA par une URL : il faut être authentifié sur la plateforme, avec les permissions requises.' },
-  { kicker: 'AUTHENTIFICATION', title: 'JWT signé RS256 côté serveur', detail: 'Chaque participant reçoit un token signé par le backend Spring Boot — clé privée RSA en variable d’environnement, jamais exposée.' },
-  { kicker: 'MÉDIA', title: 'Infrastructure JaaS (8x8)', detail: 'Les flux audio/vidéo transitent par Jitsi as a Service : chiffrement des flux géré par une infrastructure spécialisée.' },
+// Schéma : diagramme de séquence — l'identité reste chez nous, le média est délégué
+const ACTORS = [
+  { x: 210, label: 'UTILISATEUR', sub: 'PWA authentifiée', red: false },
+  { x: 800, label: 'PLATEFORME', sub: 'Spring Boot', red: true },
+  { x: 1390, label: 'JAAS · 8X8', sub: 'infrastructure Jitsi', red: false },
 ]
 
 export default function Annexe_S3_Visio() {
   return (
-    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '2cqh 5cqw 3cqh' }}>
+    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '0 4cqw 3cqh' }}>
 
-      <div className="flex items-stretch" style={{ gap: '1.2cqw' }}>
-        {CHAIN.map((c, i) => (
-          <div key={c.kicker} className="flex items-center flex-1" style={{ gap: '1.2cqw' }}>
-            <motion.div
-              className="flex-1 flex flex-col h-full"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.18, ease }}
-              style={{
-                padding: '2.4cqh 1.8cqw', borderRadius: '1cqh', gap: '1.2cqh',
-                background: i === 1 ? 'rgba(200,16,46,0.10)' : 'rgba(255,255,255,0.04)',
-                border: i === 1 ? '1px solid rgba(200,16,46,0.55)' : '1px solid rgba(255,255,255,0.12)',
-              }}
-            >
-              <span style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '1.3cqh', fontWeight: 700, letterSpacing: '0.25em', color: '#c8102e',
-              }}>
-                {c.kicker}
-              </span>
-              <span style={{ fontSize: '2.2cqh', fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>
-                {c.title}
-              </span>
-              <span style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
-                {c.detail}
-              </span>
-            </motion.div>
-            {i < CHAIN.length - 1 && (
-              <motion.span
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 + i * 0.18, ease }}
-                style={{ fontSize: '2.6cqh', color: '#c8102e', fontWeight: 700, flexShrink: 0 }}
-              >
-                →
-              </motion.span>
-            )}
-          </div>
+      <svg viewBox="0 0 1600 600" style={{ width: '100%' }}>
+
+        {/* Lignes de vie */}
+        {ACTORS.map((a, i) => (
+          <motion.g key={a.label} initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 + i * 0.15, ease }}>
+            <rect
+              x={a.x - 150} y="20" width="300" height="78" rx="14"
+              fill={a.red ? 'rgba(200,16,46,0.12)' : 'rgba(255,255,255,0.04)'}
+              stroke={a.red ? '#c8102e' : 'rgba(255,255,255,0.35)'} strokeWidth="2"
+            />
+            <text x={a.x} y="55" textAnchor="middle" fill={a.red ? '#c8102e' : 'rgba(255,255,255,0.7)'} fontFamily="'JetBrains Mono', monospace" fontSize="21" fontWeight="700" letterSpacing="3">{a.label}</text>
+            <text x={a.x} y="84" textAnchor="middle" fill="#fff" fontSize="20" fontWeight="700">{a.sub}</text>
+            <line x1={a.x} y1="98" x2={a.x} y2="560" stroke="rgba(255,255,255,0.2)" strokeWidth="2" strokeDasharray="7 8" />
+          </motion.g>
         ))}
-      </div>
 
-      <motion.div
-        className="flex items-center"
-        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9, ease }}
+        {/* 1 — connexion + permissions */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.9, ease }}>
+          <line x1="210" y1="180" x2="780" y2="180" stroke="#fff" strokeWidth="3.5" />
+          <path d="M 780 180 l -22 -12 v 24 z" fill="#fff" />
+          <text x="495" y="164" textAnchor="middle" fill="#fff" fontSize="21" fontWeight="700">connexion authentifiée · permissions RBAC</text>
+        </motion.g>
+
+        {/* 2 — JWT signé RS256 */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 1.4, ease }}>
+          <line x1="790" y1="280" x2="230" y2="280" stroke="#c8102e" strokeWidth="5" />
+          <path d="M 230 280 l 24 -13 v 26 z" fill="#c8102e" />
+          <text x="510" y="262" textAnchor="middle" fill="#ff8896" fontFamily="'JetBrains Mono', monospace" fontSize="21" fontWeight="700">JWT SIGNÉ RS256</text>
+          <text x="510" y="308" textAnchor="middle" fill="rgba(255,255,255,0.55)" fontSize="19" fontStyle="italic">clé privée RSA en variable d’environnement — jamais exposée</text>
+        </motion.g>
+
+        {/* 3 — rejoint la salle avec le token */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 1.9, ease }}>
+          <line x1="210" y1="390" x2="1370" y2="390" stroke="#fff" strokeWidth="3.5" />
+          <path d="M 1370 390 l -22 -12 v 24 z" fill="#fff" />
+          <text x="790" y="374" textAnchor="middle" fill="#fff" fontSize="21" fontWeight="700">rejoint la Salle MIKA avec le token (iframe) — pas d’accès par simple URL</text>
+        </motion.g>
+
+        {/* 4 — vérification + média chiffré */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 2.4, ease }}>
+          <rect x="1180" y="440" width="420" height="100" rx="12" fill="rgba(200,16,46,0.08)" stroke="rgba(200,16,46,0.55)" strokeWidth="2" />
+          <text x="1390" y="480" textAnchor="middle" fill="#fff" fontSize="21" fontWeight="700">vérifie la signature du token</text>
+          <text x="1390" y="514" textAnchor="middle" fill="rgba(255,255,255,0.6)" fontSize="20">flux audio/vidéo chiffrés — infra spécialisée</text>
+        </motion.g>
+
+        {/* Séparation des responsabilités */}
+        <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 2.9, ease }}>
+          <line x1="1095" y1="120" x2="1095" y2="560" stroke="rgba(200,16,46,0.5)" strokeWidth="2" strokeDasharray="4 8" />
+          <text x="1060" y="580" textAnchor="end" fill="#c8102e" fontFamily="'JetBrains Mono', monospace" fontSize="18" fontWeight="700" letterSpacing="2">IDENTITÉ · CHEZ NOUS</text>
+          <text x="1130" y="580" fill="rgba(255,255,255,0.45)" fontFamily="'JetBrains Mono', monospace" fontSize="18" fontWeight="700" letterSpacing="2">MÉDIA · DÉLÉGUÉ</text>
+        </motion.g>
+      </svg>
+
+      {/* Note */}
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 3.2, ease }}
         style={{
-          gap: '1.5cqw', padding: '1.6cqh 2cqw', borderRadius: '0.8cqh', marginTop: '3cqh',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+          textAlign: 'center', margin: '1.5cqh 0 0', fontSize: '1.6cqh', fontWeight: 500,
+          color: 'rgba(255,255,255,0.55)',
         }}
       >
-        <div style={{ width: 3, alignSelf: 'stretch', background: '#c8102e', borderRadius: 2 }} />
-        <p style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', margin: 0, lineHeight: 1.5 }}>
-          Choix assumé : <b style={{ color: '#fff' }}>ne pas réinventer un serveur de visioconférence</b>.
-          La plateforme garde la maîtrise de l’identité et des accès ; le média est délégué à un
-          spécialiste — le même modèle que les grandes suites collaboratives.
-        </p>
-      </motion.div>
+        Choix assumé : ne pas réinventer un serveur de visioconférence — le même modèle que les grandes suites collaboratives.
+      </motion.p>
     </div>
   )
 }

@@ -2,81 +2,114 @@ import { motion } from 'framer-motion'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-// Fidèle au §2 du rapport : RGPD non applicable au Gabon, retenu comme référentiel de bonne pratique
-const BLOCKS = [
-  {
-    kicker: 'DROIT',
-    title: 'Non applicable directement',
-    lines: ['Le RGPD est un règlement européen', 'Le Gabon n’y est pas soumis'],
-    dim: true,
-  },
-  {
-    kicker: 'CHOIX DU PROJET',
-    title: 'Retenu comme référentiel',
-    lines: ['Minimisation des données collectées', 'Droit d’accès aux données', 'Sécurisation du stockage'],
-    dim: false,
-  },
-  {
-    kicker: 'EN PRATIQUE',
-    title: 'Traduit dans la plateforme',
-    lines: ['Données sensibles (budgets, incidents, photos)', 'Accès strictement limité par les rôles (RBAC)', 'Journal d’audit des actions'],
-    dim: true,
-  },
-]
+// Schéma : entonnoir vertical — du droit (non contraignant) à la pratique (implémentée)
+const PRINCIPES = ['minimisation des données', 'droit d’accès', 'sécurisation du stockage']
+const PRATIQUE = ['accès limité par rôles — RBAC', 'journal d’audit des actions', 'budgets · incidents · photos protégés']
 
 export default function Annexe_S4_RGPD() {
   return (
-    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '2cqh 5cqw 3cqh' }}>
+    <div className="w-full h-full flex flex-col items-center justify-center" style={{ padding: '0 6cqw 3cqh' }}>
 
-      <div className="flex items-stretch" style={{ gap: '1.5cqw' }}>
-        {BLOCKS.map((b, i) => (
-          <motion.div
-            key={b.kicker}
-            className="flex-1 flex flex-col"
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 + i * 0.18, ease }}
-            style={{
-              padding: '2.4cqh 1.8cqw', borderRadius: '1cqh', gap: '1.2cqh',
-              background: b.dim ? 'rgba(255,255,255,0.04)' : 'rgba(200,16,46,0.10)',
-              border: b.dim ? '1px solid rgba(255,255,255,0.12)' : '1px solid rgba(200,16,46,0.55)',
-            }}
-          >
-            <span style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '1.3cqh', fontWeight: 700, letterSpacing: '0.25em', color: '#c8102e',
-            }}>
-              {b.kicker}
-            </span>
-            <span style={{ fontSize: '2.2cqh', fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>
-              {b.title}
-            </span>
-            <div className="flex flex-col" style={{ gap: '0.9cqh', marginTop: '0.5cqh' }}>
-              {b.lines.map((l) => (
-                <div key={l} className="flex items-baseline" style={{ gap: '0.8cqw' }}>
-                  <span style={{ color: '#c8102e', fontSize: '1.6cqh', flexShrink: 0 }}>›</span>
-                  <span style={{ fontSize: '1.8cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', lineHeight: 1.4 }}>{l}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
+      {/* ── Étage 1 : le droit (large, gris, pointillé) ── */}
       <motion.div
-        className="flex items-center"
-        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9, ease }}
+        className="flex flex-col items-center"
+        initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2, ease }}
         style={{
-          gap: '1.5cqw', padding: '1.6cqh 2cqw', borderRadius: '0.8cqh', marginTop: '3cqh',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+          width: '92%', padding: '2cqh 2cqw', gap: '0.6cqh',
+          border: '2px dashed rgba(255,255,255,0.3)', borderRadius: '1cqh',
         }}
       >
-        <div style={{ width: 3, alignSelf: 'stretch', background: '#c8102e', borderRadius: 2 }} />
-        <p style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', margin: 0, lineHeight: 1.5 }}>
-          Appliquer les principes RGPD <b style={{ color: '#fff' }}>sans y être contraint</b>, c’est se conformer aux
-          standards internationaux du sujet — et préparer la plateforme à d’éventuelles exigences futures,
-          locales ou de clients internationaux.
-        </p>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.45)' }}>
+          RGPD — RÈGLEMENT EUROPÉEN
+        </span>
+        <span style={{ fontSize: '2cqh', fontWeight: 700, color: 'rgba(255,255,255,0.65)' }}>
+          non applicable au Gabon — aucune obligation légale
+        </span>
       </motion.div>
+
+      {/* Flèche 1 */}
+      <motion.div
+        className="flex flex-col items-center"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8, ease }}
+        style={{ padding: '0.6cqh 0' }}
+      >
+        <div style={{ width: 3, height: '3.2cqh', background: '#c8102e' }} />
+        <div style={{
+          width: 0, height: 0,
+          borderLeft: '1cqh solid transparent', borderRight: '1cqh solid transparent', borderTop: '1.3cqh solid #c8102e',
+        }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.2em', color: '#ff8896', marginTop: '0.5cqh' }}>
+          RETENU VOLONTAIREMENT COMME RÉFÉRENTIEL
+        </span>
+      </motion.div>
+
+      {/* ── Étage 2 : les principes retenus (plus étroit, rouge) ── */}
+      <motion.div
+        className="flex flex-col items-center"
+        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 1.3, ease }}
+        style={{
+          width: '72%', padding: '2cqh 2cqw', gap: '1.2cqh',
+          background: 'rgba(200,16,46,0.10)', border: '2px solid #c8102e', borderRadius: '1cqh',
+        }}
+      >
+        <div className="flex items-center justify-center" style={{ gap: '1.2cqw', width: '100%' }}>
+          {PRINCIPES.map((p) => (
+            <span key={p} style={{
+              padding: '0.9cqh 1.2cqw', borderRadius: '0.6cqh',
+              background: 'rgba(200,16,46,0.25)', border: '1px solid rgba(200,16,46,0.7)',
+              fontSize: '1.8cqh', fontWeight: 700, color: '#fff', whiteSpace: 'nowrap',
+            }}>
+              {p}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Flèche 2 */}
+      <motion.div
+        className="flex flex-col items-center"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 1.9, ease }}
+        style={{ padding: '0.6cqh 0' }}
+      >
+        <div style={{ width: 3, height: '3.2cqh', background: '#c8102e' }} />
+        <div style={{
+          width: 0, height: 0,
+          borderLeft: '1cqh solid transparent', borderRight: '1cqh solid transparent', borderTop: '1.3cqh solid #c8102e',
+        }} />
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.2em', color: '#ff8896', marginTop: '0.5cqh' }}>
+          TRADUIT DANS LA PLATEFORME
+        </span>
+      </motion.div>
+
+      {/* ── Étage 3 : le concret (encore plus étroit, plein) ── */}
+      <motion.div
+        className="flex items-center justify-center"
+        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 2.4, ease }}
+        style={{
+          width: '56%', padding: '2cqh 1.5cqw', gap: '1.2cqw',
+          background: '#341920', border: '2px solid #c8102e', borderRadius: '1cqh',
+        }}
+      >
+        <div className="flex flex-col" style={{ gap: '1cqh' }}>
+          {PRATIQUE.map((p) => (
+            <div key={p} className="flex items-center" style={{ gap: '0.8cqw' }}>
+              <span style={{ color: '#c8102e', fontSize: '1.8cqh', fontWeight: 800 }}>✓</span>
+              <span style={{ fontSize: '1.8cqh', fontWeight: 600, color: '#fff' }}>{p}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Note */}
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 3, ease }}
+        style={{
+          textAlign: 'center', margin: '3cqh 0 0', fontSize: '1.6cqh', fontWeight: 500,
+          color: 'rgba(255,255,255,0.55)', maxWidth: '80%',
+        }}
+      >
+        Se conformer sans y être contraint : standards internationaux dès aujourd’hui, exigences futures déjà couvertes.
+      </motion.p>
     </div>
   )
 }
