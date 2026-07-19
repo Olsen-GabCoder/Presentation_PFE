@@ -19,6 +19,7 @@ export default function Slide06_Methodologie() {
         style={{
           backgroundImage: 'url(/images/methodologie.jpg)',
           backgroundSize: 'cover', backgroundPosition: 'center',
+          filter: 'grayscale(1)',
           opacity: 0.12,
         }}
         initial={{ scale: 1.06, opacity: 0 }}

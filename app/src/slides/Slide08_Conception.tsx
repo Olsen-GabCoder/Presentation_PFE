@@ -63,10 +63,10 @@ export default function Slide08_Conception() {
       >
         {['Entity', '→', 'Repository', '→', 'Service', '→', 'Controller'].map((s, i) => (
           <span key={i} style={{
-            fontSize: '3.6cqh',
+            fontSize: '2.2cqh',
             fontFamily: s === '→' ? undefined : "'JetBrains Mono', monospace",
             fontWeight: s === '→' ? 400 : 600,
-            color: s === '→' ? 'rgba(255,255,255,0.30)' : 'rgba(232,56,79,0.85)',
+            color: s === '→' ? '#c8102e' : 'rgba(255,255,255,0.75)',
           }}>
             {s}
           </span>
@@ -129,7 +129,7 @@ export default function Slide08_Conception() {
         <motion.text
           x={CX} y={CY - 8}
           textAnchor="middle" dominantBaseline="central"
-          fill="#c8102e" fontWeight="800" fontSize="56"
+          fill="#c8102e" fontWeight="800" fontSize="64"
           fontFamily="'JetBrains Mono', monospace"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
@@ -139,7 +139,7 @@ export default function Slide08_Conception() {
         <motion.text
           x={CX} y={CY + 32}
           textAnchor="middle" dominantBaseline="central"
-          fill="rgba(255,255,255,0.7)" fontWeight="600" fontSize="18"
+          fill="rgba(255,255,255,0.8)" fontWeight="600" fontSize="21"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
@@ -157,23 +157,23 @@ export default function Slide08_Conception() {
               transition={{ delay: 0.9 + i * 0.06, duration: 0.5 }}
             >
               {/* Dot — taille proportionnelle au nombre d'entités */}
-              <circle cx={p.x} cy={p.y} r={5 + d.count * 0.7} fill="#c8102e" opacity="0.9" />
-              <circle cx={p.x} cy={p.y} r={11 + d.count * 0.7} fill="none" stroke="rgba(200,16,46,0.25)" strokeWidth="1" />
+              <circle cx={p.x} cy={p.y} r={7 + d.count * 0.7} fill="#c8102e" opacity="0.9" />
+              <circle cx={p.x} cy={p.y} r={14 + d.count * 0.7} fill="none" stroke="rgba(200,16,46,0.3)" strokeWidth="1.5" />
 
               {/* Name */}
               <text
-                x={p.x} y={p.y - 24 - d.count * 0.7}
+                x={p.x} y={p.y - 32 - d.count * 0.7}
                 textAnchor="middle" dominantBaseline="central"
-                fill="#fff" fontWeight="700" fontSize="26"
+                fill="#fff" fontWeight="700" fontSize="32"
               >
                 {d.name}
               </text>
 
               {/* Count with label */}
               <text
-                x={p.x} y={p.y + 26 + d.count * 0.7}
+                x={p.x} y={p.y + 34 + d.count * 0.7}
                 textAnchor="middle" dominantBaseline="central"
-                fill="#e8384f" fontWeight="700" fontSize="19"
+                fill="#e8384f" fontWeight="700" fontSize="24"
                 fontFamily="'JetBrains Mono', monospace"
               >
                 {d.count} entité{d.count > 1 ? 's' : ''}
