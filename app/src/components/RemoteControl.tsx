@@ -2,11 +2,42 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Moon, Volume2, VolumeX, LayoutGrid, Play, X } from 'lucide-react'
 import { useRemoteSocket } from '../engine/useRemote'
+import { useWakeLock } from '../engine/useWakeLock'
 import { useT } from '../i18n'
+
+const TOTAL_SECONDS = 900 // 15 minutes
+
+// Plan de vol : note orateur + budget-temps (secondes) par slide. Somme = 900 s.
+const SLIDE_PLAN: { note: string; budget: number }[] = [
+  { note: 'Saluer le jury. Sujet : plateforme web de pilotage de chantiers BTP, chez MIKA Services à Libreville.', budget: 30 },
+  { note: 'Annoncer le plan en 7 parties — sans détailler, on y revient.', budget: 30 },
+  { note: 'Chiffre choc : le BTP pèse 5-12 % du PIB en Afrique francophone… et reste le secteur le moins digitalisé.', budget: 15 },
+  { note: '3 contraintes à concilier : exigences opérationnelles BTP, infrastructures du Gabon, standards internationaux.', budget: 60 },
+  { note: 'MIKA : ~1 000 collaborateurs, 143 Md FCFA de projets — pilotés sans outil unifié. Dérouler l\u2019avant/après.', budget: 60 },
+  { note: 'Aucune solution ne réunit les 5 critères : français, hors ligne, coût PME, cycle complet, adapté Afrique.', budget: 60 },
+  { note: '10 vagues fonctionnelles, même cycle : audit → mockup → code → validation → production.', budget: 60 },
+  { note: '3-tiers : React 19 + TypeScript / Spring Boot 4 Kotlin / PostgreSQL 17. Déployé sur Render.', budget: 60 },
+  { note: '81 entités JPA en 12 sous-domaines techniques. Couches Entity → Repository → Service → Controller.', budget: 45 },
+  { note: 'Sécurité multiniveau : JWT + refresh, 2FA TOTP, 13 rôles RBAC, 54 permissions, durcissement.', budget: 60 },
+  { note: 'Laisser respirer : en production depuis mars 2026 — 19 domaines, 366 endpoints, ~85K lignes.', budget: 15 },
+  { note: 'Visite guidée : dashboard exécutif, projets, pilotage matériel, barème. PWA bilingue FR/EN.', budget: 75 },
+  { note: 'Salle MIKA : Picture-in-Picture réécrit de zéro — 1 894 lignes TypeScript, 0 dépendance npm.', budget: 45 },
+  { note: 'Assistant IA contextuel : registre de guidance, prompt dynamique, streaming SSE mot par mot.', budget: 45 },
+  { note: 'Workflow DMA : un processus papier digitalisé en 7 états tracés, avec matrice de rôles.', budget: 45 },
+  { note: 'Validation terrain itérative avec le sponsor (M. Jribi) à chaque release — parcours critiques rejoués.', budget: 45 },
+  { note: 'Limites assumées : tests, QSHE partiel, PWA vs natif — chaque compromis est justifié et mitigé.', budget: 45 },
+  { note: 'Marquer une pause — laisser lire la conviction du projet.', budget: 15 },
+  { note: '3 objectifs, 3 réponses : plateforme unifiée, adaptée au contexte gabonais, conforme aux standards.', budget: 45 },
+  { note: 'Feuille de route claire : industrialisation des tests, QSHE, IA en production, monitoring, mobile.', budget: 30 },
+  { note: 'Remercier le jury et ouvrir les questions.', budget: 15 },
+]
+// Instant idéal de début de chaque slide (cumul des budgets précédents)
+const PLAN_START = SLIDE_PLAN.map((_, i) => SLIDE_PLAN.slice(0, i).reduce((a, s) => a + s.budget, 0))
 
 // Poste de pilotage complet affiché sur le smartphone (?remote=1)
 export default function RemoteControl() {
   const titles = useT().ui.slideNav.titles
+  useWakeLock() // l'écran du téléphone ne doit jamais s'éteindre pendant la soutenance
 
   const [slide, setSlide] = useState<number | null>(null)
   const [total, setTotal] = useState<number | null>(null)
@@ -64,6 +95,17 @@ export default function RemoteControl() {
 
   const showSplashStart = started === false
 
+  // Indicateur de rythme : position réelle vs plan de vol
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+  let drift: { label: string; color: string } | null = null
+  if (started && slide !== null && elapsed > 0 && slide < SLIDE_PLAN.length) {
+    const idealStart = PLAN_START[slide]
+    const idealEnd = idealStart + SLIDE_PLAN[slide].budget
+    if (elapsed < idealStart) drift = { label: `avance ${fmt(idealStart - elapsed)}`, color: '#34d399' }
+    else if (elapsed > idealEnd) drift = { label: `retard ${fmt(elapsed - idealEnd)}`, color: elapsed - idealEnd >= 60 ? '#ef4444' : '#f59e0b' }
+    else drift = { label: 'dans les temps', color: 'rgba(255,255,255,0.45)' }
+  }
+
   return (
     <div
       className="fixed inset-0 flex flex-col select-none"
@@ -78,14 +120,37 @@ export default function RemoteControl() {
           </span>
         </div>
         <div className="flex items-center" style={{ gap: 12 }}>
+          {drift && (
+            <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: drift.color }}>
+              {drift.label}
+            </span>
+          )}
           <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 15, fontWeight: 700, color: chronoColor }}>
             {mm}:{ss}
           </span>
-          <span style={{
-            width: 8, height: 8, borderRadius: '50%',
-            background: connected ? '#34d399' : '#c8102e',
-          }} />
+          {connected ? (
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399' }} />
+          ) : (
+            <span className="flex items-center" style={{ gap: 6 }}>
+              <motion.span
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ duration: 1.2, repeat: Infinity }}
+                style={{ width: 8, height: 8, borderRadius: '50%', background: '#c8102e', display: 'inline-block' }}
+              />
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#ff8896' }}>Reconnexion…</span>
+            </span>
+          )}
         </div>
+      </div>
+
+      {/* Barre de progression — 15 minutes */}
+      <div style={{ margin: '0 18px 10px', height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.1)', overflow: 'hidden' }}>
+        <div style={{
+          height: '100%', borderRadius: 2,
+          width: `${Math.min(100, (elapsed / TOTAL_SECONDS) * 100)}%`,
+          background: elapsed >= 900 ? '#ef4444' : elapsed >= 720 ? '#f59e0b' : '#c8102e',
+          transition: 'width 1s linear',
+        }} />
       </div>
 
       {/* Slide courante + titre + suivante */}
@@ -108,6 +173,29 @@ export default function RemoteControl() {
             : slide !== null && total !== null ? 'Dernière slide' : ''}
         </p>
       </div>
+
+      {/* Note orateur — message clé de la slide courante */}
+      {!showSplashStart && slide !== null && SLIDE_PLAN[slide] && (
+        <div style={{
+          margin: '0 16px 12px', padding: '12px 14px', borderRadius: 14,
+          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
+            <span style={{
+              fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.18em', textTransform: 'uppercase', color: '#c8102e',
+            }}>
+              Note orateur
+            </span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.35)' }}>
+              budget {fmt(SLIDE_PLAN[slide].budget)}
+            </span>
+          </div>
+          <p style={{ fontSize: 14, lineHeight: 1.45, color: 'rgba(255,255,255,0.85)', margin: 0, fontWeight: 500 }}>
+            {SLIDE_PLAN[slide].note}
+          </p>
+        </div>
+      )}
 
       {/* Bouton principal — Démarrer ou Suivant */}
       {showSplashStart ? (
