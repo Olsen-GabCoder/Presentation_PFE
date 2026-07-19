@@ -2,80 +2,127 @@ import { motion } from 'framer-motion'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const BLOCKS = [
-  {
-    kicker: 'LE MÉCANISME',
-    title: 'Vagues indépendantes',
-    lines: ['Chaque vague livrée est utilisable immédiatement', 'Un retard sur une vague n’affecte pas les précédentes', 'Validation incrémentale avec l’encadrant'],
-    highlight: true,
-  },
-  {
-    kicker: 'CE QUI A TENU',
-    title: 'La couverture visée',
-    lines: ['19 domaines fonctionnels livrés en production', '10 vagues menées au bout du cycle complet', 'Déploiement continu sur Render à chaque vague'],
-    highlight: false,
-  },
-  {
-    kicker: 'CE QUI A PLIÉ',
-    title: 'La profondeur, pas le périmètre',
-    lines: ['QSHE et extraction IA : finalisation partielle', 'Couverture de tests réduite (arbitrage §2.5.5)', 'Des choix documentés — pas des dérapages subis'],
-    highlight: false,
-  },
+// Schéma : 10 vagues — toutes franchissent la ligne « livré en production » ;
+// sur 2 d'entre elles, la profondeur prévue reste en pointillé (arbitrage, pas dérapage)
+const WAVES = [
+  { h: 78 }, { h: 84 }, { h: 74 }, { h: 88 }, { h: 80 },
+  { h: 72, planned: 92, tag: 'QSHE' }, { h: 82 }, { h: 70, planned: 90, tag: 'IA' }, { h: 86 }, { h: 76 },
 ]
+const THRESHOLD = 56 // % — ligne « livré en production »
 
 export default function Annexe_M5_Planification() {
   return (
-    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '2cqh 5cqw 3cqh' }}>
+    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '0 6cqw 4cqh' }}>
 
-      <div className="flex items-stretch" style={{ gap: '1.5cqw' }}>
-        {BLOCKS.map((b, i) => (
-          <motion.div
-            key={b.kicker}
-            className="flex-1 flex flex-col"
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 + i * 0.18, ease }}
-            style={{
-              padding: '2.4cqh 1.8cqw', borderRadius: '1cqh', gap: '1.2cqh',
-              background: b.highlight ? 'rgba(200,16,46,0.10)' : 'rgba(255,255,255,0.04)',
-              border: b.highlight ? '1px solid rgba(200,16,46,0.55)' : '1px solid rgba(255,255,255,0.12)',
-            }}
-          >
-            <span style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '1.3cqh', fontWeight: 700, letterSpacing: '0.25em', color: '#c8102e',
-            }}>
-              {b.kicker}
-            </span>
-            <span style={{ fontSize: '2.2cqh', fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>
-              {b.title}
-            </span>
-            <div className="flex flex-col" style={{ gap: '0.9cqh', marginTop: '0.5cqh' }}>
-              {b.lines.map((l) => (
-                <div key={l} className="flex items-baseline" style={{ gap: '0.8cqw' }}>
-                  <span style={{ color: '#c8102e', fontSize: '1.6cqh', flexShrink: 0 }}>›</span>
-                  <span style={{ fontSize: '1.8cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', lineHeight: 1.4 }}>{l}</span>
-                </div>
-              ))}
+      {/* ── Le graphique ── */}
+      <div className="relative" style={{ height: '52cqh' }}>
+
+        {/* Ligne seuil */}
+        <motion.div
+          className="absolute flex items-center"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.8, ease }}
+          style={{ left: 0, right: 0, bottom: `${THRESHOLD}%`, zIndex: 2 }}
+        >
+          <div className="flex-1" style={{ borderTop: '3px dashed #c8102e' }} />
+        </motion.div>
+        <motion.span
+          className="absolute"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 2, ease }}
+          style={{
+            right: 0, bottom: `calc(${THRESHOLD}% + 1cqh)`, zIndex: 2,
+            fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700,
+            letterSpacing: '0.18em', color: '#c8102e',
+          }}
+        >
+          LIVRÉ EN PRODUCTION — 10/10
+        </motion.span>
+
+        {/* Barres */}
+        <div className="absolute flex items-end" style={{ inset: 0, gap: '1.2cqw', zIndex: 1 }}>
+          {WAVES.map((w, i) => (
+            <div key={i} className="flex-1 relative flex flex-col justify-end" style={{ height: '100%' }}>
+              {/* Profondeur prévue non atteinte (pointillé) */}
+              {w.planned && (
+                <motion.div
+                  className="absolute"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.3, ease }}
+                  style={{
+                    left: 0, right: 0, bottom: `${w.h}%`, height: `${w.planned - w.h}%`,
+                    border: '2px dashed rgba(255,255,255,0.35)', borderBottom: 'none',
+                    borderRadius: '0.6cqh 0.6cqh 0 0',
+                  }}
+                />
+              )}
+              {/* Barre livrée */}
+              <motion.div
+                initial={{ scaleY: 0 }} animate={{ scaleY: 1 }}
+                transition={{ duration: 0.55, delay: 0.3 + i * 0.12, ease }}
+                style={{
+                  height: `${w.h}%`, transformOrigin: 'bottom',
+                  background: w.planned ? 'rgba(200,16,46,0.45)' : 'rgba(200,16,46,0.75)',
+                  border: '1px solid #c8102e', borderRadius: '0.6cqh 0.6cqh 0 0',
+                }}
+              />
+              {/* Tag arbitrage */}
+              {w.tag && (
+                <motion.span
+                  className="absolute"
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 2.5, ease }}
+                  style={{
+                    left: '50%', bottom: `${w.planned! + 2}%`, transform: 'translateX(-50%)',
+                    fontFamily: "'JetBrains Mono', monospace", fontSize: '1.3cqh', fontWeight: 700,
+                    color: 'rgba(255,255,255,0.6)', whiteSpace: 'nowrap',
+                  }}
+                >
+                  {w.tag}
+                </motion.span>
+              )}
             </div>
-          </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Axe + numéros */}
+      <div style={{ height: 3, background: 'rgba(255,255,255,0.3)' }} />
+      <div className="flex" style={{ gap: '1.2cqw', marginTop: '0.8cqh' }}>
+        {WAVES.map((_, i) => (
+          <span key={i} className="flex-1" style={{
+            textAlign: 'center', fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '1.4cqh', fontWeight: 700, color: 'rgba(255,255,255,0.45)',
+          }}>
+            V{i + 1}
+          </span>
         ))}
       </div>
 
+      {/* Légende */}
       <motion.div
-        className="flex items-center"
-        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.9, ease }}
+        className="flex items-center justify-center"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 2.7, ease }}
+        style={{ gap: '2.5cqw', marginTop: '2.5cqh' }}
+      >
+        <div className="flex items-center" style={{ gap: '0.7cqw' }}>
+          <div style={{ width: '2cqh', height: '2cqh', background: 'rgba(200,16,46,0.75)', border: '1px solid #c8102e', borderRadius: 3 }} />
+          <span style={{ fontSize: '1.6cqh', fontWeight: 600, color: '#fff' }}>périmètre livré — a tenu</span>
+        </div>
+        <div className="flex items-center" style={{ gap: '0.7cqw' }}>
+          <div style={{ width: '2cqh', height: '2cqh', border: '2px dashed rgba(255,255,255,0.4)', borderRadius: 3 }} />
+          <span style={{ fontSize: '1.6cqh', fontWeight: 500, color: 'rgba(255,255,255,0.6)' }}>profondeur reportée — QSHE, extraction IA, tests (§2.5.5)</span>
+        </div>
+      </motion.div>
+
+      {/* Note */}
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 3, ease }}
         style={{
-          gap: '1.5cqw', padding: '1.6cqh 2cqw', borderRadius: '0.8cqh', marginTop: '3cqh',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+          textAlign: 'center', margin: '2cqh 0 0', fontSize: '1.6cqh', fontWeight: 500,
+          color: 'rgba(255,255,255,0.55)',
         }}
       >
-        <div style={{ width: 3, alignSelf: 'stretch', background: '#c8102e', borderRadius: 2 }} />
-        <p style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', margin: 0, lineHeight: 1.5 }}>
-          Le plan a tenu parce qu’il était <b style={{ color: '#fff' }}>conçu pour absorber les aléas</b> :
-          les vagues bornent le risque. Quand il a fallu arbitrer, on a sacrifié de la profondeur locale —
-          <b style={{ color: '#fff' }}> jamais la livraison en production</b>.
-        </p>
-      </motion.div>
+        Les vagues bornent le risque : un retard n’affecte pas les précédentes. On a sacrifié de la profondeur locale — jamais la livraison en production.
+      </motion.p>
     </div>
   )
 }
