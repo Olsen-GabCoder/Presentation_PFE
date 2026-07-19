@@ -20,25 +20,22 @@ export default function AnnexeOverlay({ annex, onClose }: { annex: number | null
           {/* Filet rouge — bord gauche, signature du deck */}
           <div className="absolute left-0 top-0 bottom-0" style={{ width: '0.3cqw', background: '#c8102e' }} />
 
-          {/* Badge annexe + question */}
+          {/* Badge annexe discret — la question vient d'être posée à l'oral, on ne la réaffiche pas */}
           <div
-            className="absolute top-0 left-0 right-0 flex items-baseline"
-            style={{ padding: '3.2cqh 4cqw 0 5cqw', gap: '1.5cqw' }}
+            className="absolute top-0 left-0"
+            style={{ padding: '3.2cqh 0 0 5cqw' }}
           >
             <span style={{
               fontFamily: "'JetBrains Mono', monospace",
               fontSize: '1.5cqh', fontWeight: 700, letterSpacing: '0.3em',
-              textTransform: 'uppercase', color: '#c8102e', flexShrink: 0,
+              textTransform: 'uppercase', color: '#c8102e',
             }}>
               Annexe · {def.id}
-            </span>
-            <span style={{ fontSize: '2.4cqh', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
-              {def.question}
             </span>
           </div>
 
           {/* Schéma-réponse */}
-          <div className="absolute" style={{ top: '9cqh', left: 0, right: 0, bottom: 0 }}>
+          <div className="absolute" style={{ top: '6cqh', left: 0, right: 0, bottom: 0 }}>
             <Schema />
           </div>
 

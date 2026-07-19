@@ -2,88 +2,159 @@ import { motion } from 'framer-motion'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-const CRITERIA = [
-  { label: 'Modèle métier',   pg: '81 entités fortement reliées → relationnel naturel', mongo: 'Relations à dénormaliser à la main' },
-  { label: 'Transactions',    pg: 'ACID natif — workflows multi-tables sûrs (DMA 7 états)', mongo: 'Transactions limitées, plus récentes' },
-  { label: 'Intégrité',       pg: 'Clés étrangères + contraintes CHECK en base', mongo: 'Validation déportée dans le code' },
-  { label: 'Requêtes',        pg: 'SQL + jointures pour les tableaux de bord agrégés', mongo: 'Pipelines d’agrégation plus verbeux' },
+// Schéma : graphe d'entités reliées (PostgreSQL, retenu) vs documents épars (MongoDB, écarté)
+const NODES = [
+  { id: 'Projets', x: 250, y: 60 },
+  { id: 'Équipes', x: 90, y: 160 },
+  { id: 'Matériel', x: 410, y: 160 },
+  { id: 'DMA', x: 150, y: 285 },
+  { id: 'Barèmes', x: 350, y: 285 },
+]
+const EDGES: [number, number][] = [[0, 1], [0, 2], [0, 3], [0, 4], [1, 3], [2, 4], [3, 4]]
+
+const DOCS = [
+  { x: 90, y: 60, r: -8 }, { x: 300, y: 45, r: 5 }, { x: 180, y: 160, r: 10 },
+  { x: 390, y: 165, r: -6 }, { x: 100, y: 265, r: 7 }, { x: 290, y: 270, r: -10 },
 ]
 
 export default function Annexe_A5_PostgreSQL() {
   return (
-    <div className="w-full h-full flex flex-col" style={{ padding: '2cqh 5cqw 3cqh' }}>
+    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '0 5cqw 4cqh' }}>
 
-      {/* En-têtes */}
-      <div className="flex" style={{ gap: '2cqw', marginBottom: '1.5cqh' }}>
-        <div style={{ width: '14cqw' }} />
+      <div className="flex items-stretch" style={{ height: '56cqh', gap: '2.5cqw' }}>
+
+        {/* ── PostgreSQL : le graphe relié ── */}
         <motion.div
-          className="flex-1 flex items-center justify-center"
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2, ease }}
+          className="flex flex-col"
+          initial={{ opacity: 0, x: -25 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.2, ease }}
           style={{
-            padding: '1.2cqh 0', borderRadius: '0.8cqh',
-            background: 'rgba(200,16,46,0.12)', border: '1px solid rgba(200,16,46,0.55)', gap: '1cqw',
+            flex: 1, borderRadius: '1.2cqh', padding: '2cqh 1.5cqw',
+            border: '1px solid rgba(200,16,46,0.55)', background: 'rgba(200,16,46,0.06)',
           }}
         >
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, color: '#c8102e', letterSpacing: '0.2em' }}>RETENU</span>
-          <span style={{ fontSize: '2.4cqh', fontWeight: 800, color: '#fff' }}>PostgreSQL 17</span>
+          <div className="flex items-center justify-between">
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.25em', color: '#c8102e' }}>
+              RETENU · POSTGRESQL 17
+            </span>
+            <span style={{ fontSize: '1.5cqh', fontWeight: 700, color: '#fff' }}>81 entités reliées</span>
+          </div>
+          <svg viewBox="0 0 500 340" style={{ width: '100%', flex: 1 }}>
+            {EDGES.map(([a, b], i) => (
+              <motion.line
+                key={i}
+                x1={NODES[a].x} y1={NODES[a].y} x2={NODES[b].x} y2={NODES[b].y}
+                stroke="#c8102e" strokeWidth="2.5" opacity="0.7"
+                initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 + i * 0.1, ease }}
+              />
+            ))}
+            {NODES.map((n, i) => (
+              <motion.g
+                key={n.id}
+                initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.45 + i * 0.1, ease }}
+                style={{ transformOrigin: `${n.x}px ${n.y}px` }}
+              >
+                <circle cx={n.x} cy={n.y} r="42" fill="#141416" stroke="#fff" strokeWidth="2" />
+                <text x={n.x} y={n.y + 5} textAnchor="middle" fill="#fff" fontSize="15" fontWeight="700">{n.id}</text>
+              </motion.g>
+            ))}
+          </svg>
+          <div className="flex justify-center" style={{ gap: '0.8cqw' }}>
+            {['ACID', 'FK + CHECK en base', 'SQL · jointures'].map((c, i) => (
+              <motion.span
+                key={c}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 1.6 + i * 0.12, ease }}
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: '1.35cqh', fontWeight: 700,
+                  padding: '0.7cqh 0.9cqw', borderRadius: '0.6cqh', color: '#fff',
+                  background: 'rgba(200,16,46,0.35)', border: '1px solid rgba(200,16,46,0.7)',
+                }}
+              >
+                {c}
+              </motion.span>
+            ))}
+          </div>
         </motion.div>
+
+        {/* ── MongoDB : documents épars ── */}
         <motion.div
-          className="flex-1 flex items-center justify-center"
-          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3, ease }}
+          className="flex flex-col"
+          initial={{ opacity: 0, x: 25 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.4, ease }}
           style={{
-            padding: '1.2cqh 0', borderRadius: '0.8cqh',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)', gap: '1cqw',
+            flex: 1, borderRadius: '1.2cqh', padding: '2cqh 1.5cqw',
+            border: '1px dashed rgba(255,255,255,0.25)', background: 'rgba(255,255,255,0.02)',
           }}
         >
-          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.2em' }}>ÉCARTÉ</span>
-          <span style={{ fontSize: '2.4cqh', fontWeight: 800, color: 'rgba(255,255,255,0.55)' }}>MongoDB</span>
+          <div className="flex items-center justify-between">
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.4cqh', fontWeight: 700, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.45)' }}>
+              ÉCARTÉ · MONGODB
+            </span>
+            <span style={{ fontSize: '1.5cqh', fontWeight: 500, color: 'rgba(255,255,255,0.45)' }}>documents isolés</span>
+          </div>
+          <svg viewBox="0 0 500 340" style={{ width: '100%', flex: 1 }}>
+            {/* Liens rompus */}
+            {[[0, 2], [1, 3], [4, 5]].map(([a, b], i) => (
+              <motion.g key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 1.3 + i * 0.15, ease }}>
+                <line
+                  x1={DOCS[a].x + 40} y1={DOCS[a].y + 25} x2={DOCS[b].x + 40} y2={DOCS[b].y + 25}
+                  stroke="rgba(255,255,255,0.25)" strokeWidth="2" strokeDasharray="6 8"
+                />
+                <text
+                  x={(DOCS[a].x + DOCS[b].x) / 2 + 40} y={(DOCS[a].y + DOCS[b].y) / 2 + 20}
+                  textAnchor="middle" fill="rgba(255,255,255,0.5)" fontSize="20" fontWeight="700"
+                >?</text>
+              </motion.g>
+            ))}
+            {DOCS.map((d, i) => (
+              <motion.g
+                key={i}
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.7 + i * 0.1, ease }}
+              >
+                <rect
+                  x={d.x} y={d.y} width="80" height="52" rx="6"
+                  fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5"
+                  transform={`rotate(${d.r} ${d.x + 40} ${d.y + 26})`}
+                />
+                <g transform={`rotate(${d.r} ${d.x + 40} ${d.y + 26})`}>
+                  <line x1={d.x + 12} y1={d.y + 16} x2={d.x + 68} y2={d.y + 16} stroke="rgba(255,255,255,0.3)" strokeWidth="3" />
+                  <line x1={d.x + 12} y1={d.y + 28} x2={d.x + 56} y2={d.y + 28} stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
+                  <line x1={d.x + 12} y1={d.y + 40} x2={d.x + 62} y2={d.y + 40} stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
+                </g>
+              </motion.g>
+            ))}
+          </svg>
+          <div className="flex justify-center" style={{ gap: '0.8cqw' }}>
+            {['dénormalisation manuelle', 'validation dans le code'].map((c, i) => (
+              <motion.span
+                key={c}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 1.8 + i * 0.12, ease }}
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace", fontSize: '1.35cqh', fontWeight: 500,
+                  padding: '0.7cqh 0.9cqw', borderRadius: '0.6cqh', color: 'rgba(255,255,255,0.5)',
+                  border: '1px dashed rgba(255,255,255,0.25)',
+                }}
+              >
+                {c}
+              </motion.span>
+            ))}
+          </div>
         </motion.div>
       </div>
 
-      {/* Lignes de critères */}
-      <div className="flex-1 flex flex-col justify-center" style={{ gap: '0.4cqh' }}>
-        {CRITERIA.map((c, i) => (
-          <motion.div
-            key={c.label}
-            className="flex items-center"
-            initial={{ opacity: 0, x: 25 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 + i * 0.12, ease }}
-            style={{ gap: '2cqw', padding: '1.6cqh 0', borderBottom: i < CRITERIA.length - 1 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}
-          >
-            <span style={{
-              width: '14cqw', flexShrink: 0,
-              fontFamily: "'JetBrains Mono', monospace",
-              fontSize: '1.6cqh', fontWeight: 700, color: 'rgba(255,255,255,0.55)',
-              textTransform: 'uppercase', letterSpacing: '0.08em',
-            }}>
-              {c.label}
-            </span>
-            <span className="flex-1" style={{ fontSize: '1.9cqh', fontWeight: 700, color: '#fff', textAlign: 'center', lineHeight: 1.4 }}>
-              {c.pg}
-            </span>
-            <span className="flex-1" style={{ fontSize: '1.9cqh', fontWeight: 500, color: 'rgba(255,255,255,0.45)', textAlign: 'center', lineHeight: 1.4 }}>
-              {c.mongo}
-            </span>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Verdict */}
-      <motion.div
-        className="flex items-center"
-        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1, ease }}
+      {/* Note */}
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 2.3, ease }}
         style={{
-          gap: '1.5cqw', padding: '1.6cqh 2cqw', borderRadius: '0.8cqh',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+          textAlign: 'center', margin: '3cqh 0 0', fontSize: '1.6cqh', fontWeight: 500,
+          color: 'rgba(255,255,255,0.55)',
         }}
       >
-        <div style={{ width: 3, alignSelf: 'stretch', background: '#c8102e', borderRadius: 2 }} />
-        <p style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', margin: 0, lineHeight: 1.5 }}>
-          Le métier BTP est <b style={{ color: '#fff' }}>profondément relationnel</b> : projets, équipes, matériel, barèmes, validations.
-          L’intégrité garantie en base vaut plus que la flexibilité de schéma — et PostgreSQL reste
-          <b style={{ color: '#fff' }}> gratuit, open source et supporté par Render</b>.
-        </p>
-      </motion.div>
+        Le métier BTP est profondément relationnel — l’intégrité garantie en base vaut plus que la flexibilité de schéma · gratuit, open source, supporté par Render.
+      </motion.p>
     </div>
   )
 }

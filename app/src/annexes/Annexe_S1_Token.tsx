@@ -2,87 +2,120 @@ import { motion } from 'framer-motion'
 
 const ease = [0.22, 1, 0.36, 1] as const
 
-// Barrières successives limitant l'impact d'un token volé
+// Schéma : un token volé traverse 4 barrières — la flèche d'attaque s'affaiblit à chaque mur
 const BARRIERS = [
-  { kicker: 'BARRIÈRE 1', title: 'Access token : 15 min', detail: 'Fenêtre d’exploitation très courte — le token expire avant d’être rentable.' },
-  { kicker: 'BARRIÈRE 2', title: 'Rotation + famille de tokens', detail: 'Chaque refresh est à usage unique. Réutilisation détectée → révocation de toute la famille.' },
-  { kicker: 'BARRIÈRE 3', title: '2FA TOTP', detail: 'Un token seul ne suffit pas pour les opérations sensibles — second facteur requis.' },
-  { kicker: 'BARRIÈRE 4', title: 'Rate limiting', detail: '5 tentatives / 15 min / IP — le rejeu massif est bloqué en amont.' },
+  { num: '01', title: 'Expiration 15 min', detail: 'access token à courte durée' },
+  { num: '02', title: 'Rotation + famille', detail: 'réutilisation → révocation totale' },
+  { num: '03', title: '2FA TOTP', detail: 'second facteur requis' },
+  { num: '04', title: 'Rate limiting', detail: '5 essais / 15 min / IP' },
 ]
+
+// Épaisseur décroissante de la flèche d'attaque après chaque barrière
+const ARROW = [{ h: 10, o: 1 }, { h: 7, o: 0.75 }, { h: 4.5, o: 0.5 }, { h: 2.5, o: 0.3 }, { h: 1.5, o: 0.18 }]
 
 export default function Annexe_S1_Token() {
   return (
-    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '2cqh 5cqw 3cqh' }}>
+    <div className="w-full h-full flex flex-col justify-center" style={{ padding: '0 5cqw 4cqh' }}>
 
-      {/* Point de départ */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2, ease }}
-        className="flex items-center justify-center"
-        style={{
-          alignSelf: 'center', padding: '1.2cqh 3cqw', borderRadius: '0.8cqh', marginBottom: '2.5cqh',
-          background: 'rgba(200,16,46,0.12)', border: '1px solid rgba(200,16,46,0.55)',
-        }}
-      >
-        <span style={{ fontSize: '2.2cqh', fontWeight: 800, color: '#fff' }}>
-          Token intercepté — et ensuite ?
-        </span>
-      </motion.div>
+      {/* ── Le flux d'attaque ── */}
+      <div className="flex items-center" style={{ height: '34cqh' }}>
 
-      {/* Quatre barrières successives */}
-      <div className="flex items-stretch" style={{ gap: '1.2cqw' }}>
+        {/* Origine : token volé */}
+        <motion.div
+          className="flex flex-col items-center justify-center flex-shrink-0"
+          initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2, ease }}
+          style={{
+            width: '11cqw', height: '11cqw', borderRadius: '50%',
+            border: '2px solid #c8102e', background: 'rgba(200,16,46,0.15)', gap: '0.4cqh',
+          }}
+        >
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.3cqh', fontWeight: 700, letterSpacing: '0.15em', color: '#ff8896' }}>TOKEN</span>
+          <span style={{ fontSize: '2.1cqh', fontWeight: 800, color: '#fff' }}>VOLÉ</span>
+        </motion.div>
+
+        {/* Barrières traversées par la flèche qui s'affaiblit */}
         {BARRIERS.map((b, i) => (
-          <div key={b.kicker} className="flex items-center flex-1" style={{ gap: '1.2cqw' }}>
+          <div key={b.num} className="flex items-center flex-1" style={{ minWidth: 0 }}>
+            {/* Segment de flèche — s'amincit */}
             <motion.div
-              className="flex-1 flex flex-col h-full"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 + i * 0.18, ease }}
+              className="flex-1"
+              initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+              transition={{ duration: 0.45, delay: 0.5 + i * 0.35, ease }}
               style={{
-                padding: '2.2cqh 1.6cqw', borderRadius: '1cqh', gap: '1cqh',
-                background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)',
+                height: ARROW[i].h, background: '#c8102e', opacity: ARROW[i].o,
+                transformOrigin: 'left', borderRadius: 2,
               }}
+            />
+            {/* Le mur */}
+            <motion.div
+              className="flex flex-col items-center flex-shrink-0"
+              initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.65 + i * 0.35, ease }}
+              style={{ width: '2.2cqw' }}
             >
-              <span style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: '1.2cqh', fontWeight: 700, letterSpacing: '0.22em', color: '#c8102e',
-              }}>
-                {b.kicker}
-              </span>
-              <span style={{ fontSize: '2cqh', fontWeight: 800, color: '#fff', letterSpacing: '-0.01em' }}>
-                {b.title}
-              </span>
-              <span style={{ fontSize: '1.6cqh', fontWeight: 500, color: 'rgba(255,255,255,0.7)', lineHeight: 1.45 }}>
-                {b.detail}
-              </span>
+              <div style={{
+                width: '1.4cqw', height: '26cqh', borderRadius: '0.7cqw',
+                background: 'linear-gradient(180deg, #c8102e 0%, #c8102e 12%, rgba(255,255,255,0.14) 12%, rgba(255,255,255,0.14) 100%)',
+                border: '1px solid rgba(255,255,255,0.25)',
+              }} />
             </motion.div>
-            {i < BARRIERS.length - 1 && (
-              <motion.span
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.6 + i * 0.18, ease }}
-                style={{ fontSize: '2.6cqh', color: '#c8102e', fontWeight: 700, flexShrink: 0 }}
-              >
-                →
-              </motion.span>
-            )}
           </div>
         ))}
+
+        {/* Dernier filet de flèche + impact résiduel */}
+        <motion.div
+          className="flex-1"
+          initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
+          transition={{ duration: 0.45, delay: 0.5 + 4 * 0.35, ease }}
+          style={{ height: ARROW[4].h, background: '#c8102e', opacity: ARROW[4].o, transformOrigin: 'left', borderRadius: 2 }}
+        />
+        <motion.div
+          className="flex flex-col items-center justify-center flex-shrink-0"
+          initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 2.2, ease }}
+          style={{
+            width: '10cqw', height: '10cqw', borderRadius: '50%',
+            border: '1px dashed rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.03)', gap: '0.4cqh',
+          }}
+        >
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.2cqh', fontWeight: 700, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.45)' }}>IMPACT</span>
+          <span style={{ fontSize: '2.2cqh', fontWeight: 800, color: '#fff' }}>≤ 15 min</span>
+          <span style={{ fontSize: '1.2cqh', fontWeight: 600, color: 'rgba(255,255,255,0.45)' }}>détecté · révoqué</span>
+        </motion.div>
       </div>
 
-      {/* Verdict */}
-      <motion.div
-        className="flex items-center"
-        initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 1.2, ease }}
+      {/* ── Légendes sous les murs ── */}
+      <div className="flex" style={{ marginTop: '2.5cqh' }}>
+        <div style={{ width: '11cqw' }} className="flex-shrink-0" />
+        {BARRIERS.map((b, i) => (
+          <motion.div
+            key={b.num}
+            className="flex-1 flex flex-col items-center"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 + i * 0.35, ease }}
+            style={{ gap: '0.3cqh', textAlign: 'center' }}
+          >
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.3cqh', fontWeight: 700, color: '#c8102e' }}>
+              {b.num}
+            </span>
+            <span style={{ fontSize: '1.9cqh', fontWeight: 800, color: '#fff' }}>{b.title}</span>
+            <span style={{ fontSize: '1.4cqh', fontWeight: 500, color: 'rgba(255,255,255,0.5)' }}>{b.detail}</span>
+          </motion.div>
+        ))}
+        <div style={{ width: '10cqw' }} className="flex-shrink-0" />
+      </div>
+
+      {/* Note bcrypt discrète */}
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 2.6, ease }}
         style={{
-          gap: '1.5cqw', padding: '1.6cqh 2cqw', borderRadius: '0.8cqh', marginTop: '3cqh',
-          background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+          textAlign: 'center', margin: '3.5cqh 0 0', fontSize: '1.5cqh', fontWeight: 500,
+          color: 'rgba(255,255,255,0.45)',
         }}
       >
-        <div style={{ width: 3, alignSelf: 'stretch', background: '#c8102e', borderRadius: 2 }} />
-        <p style={{ fontSize: '1.7cqh', fontWeight: 500, color: 'rgba(255,255,255,0.85)', margin: 0, lineHeight: 1.5 }}>
-          Défense en profondeur : aucun mécanisme n’est suffisant seul, mais leur combinaison réduit
-          l’impact d’un vol à une <b style={{ color: '#fff' }}>fenêtre de 15 minutes maximum</b>, détectée et révoquée.
-          Mots de passe stockés en <b style={{ color: '#fff' }}>bcrypt (coût 12)</b> — jamais en clair.
-        </p>
-      </motion.div>
+        En amont : mots de passe bcrypt (coût 12) — jamais stockés en clair.
+      </motion.p>
     </div>
   )
 }
