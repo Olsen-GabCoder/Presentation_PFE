@@ -5,6 +5,10 @@ import Annexe_A1_Kotlin from './Annexe_A1_Kotlin'
 import Annexe_A3_Connectivite from './Annexe_A3_Connectivite'
 import Annexe_A5_PostgreSQL from './Annexe_A5_PostgreSQL'
 import Annexe_S1_Token from './Annexe_S1_Token'
+import Annexe_M4_Difficultes from './Annexe_M4_Difficultes'
+import Annexe_C2_BusFactor from './Annexe_C2_BusFactor'
+import Annexe_L1_IA from './Annexe_L1_IA'
+import Annexe_L3_IAGenerative from './Annexe_L3_IAGenerative'
 
 export interface AnnexeDef {
   id: string
@@ -35,15 +39,15 @@ export const ANNEXES: AnnexeDef[] = [
   { id: 'M1', cat: 'Méthodologie', question: 'Pourquoi si peu de tests automatisés ?', component: Annexe_M1_Tests },
   { id: 'M2', cat: 'Méthodologie', question: 'Vos « vagues », c\u2019est du Scrum ?' },
   { id: 'M3', cat: 'Méthodologie', question: 'Comment savez-vous que ça marche vraiment ?' },
-  { id: 'M4', cat: 'Méthodologie', question: 'Racontez une vraie difficulté technique.' },
+  { id: 'M4', cat: 'Méthodologie', question: 'Racontez une vraie difficulté technique.', component: Annexe_M4_Difficultes },
   { id: 'M5', cat: 'Méthodologie', question: 'Six mois seul : la planification a tenu ?' },
   // ── Métier & posture ──
   { id: 'C1', cat: 'Métier', question: 'Qu\u2019est-ce qui rend la plateforme « adaptée à l\u2019Afrique » ?' },
-  { id: 'C2', cat: 'Métier', question: 'Seul sur 85 000 lignes : bus factor ?' },
+  { id: 'C2', cat: 'Métier', question: 'Seul sur 85 000 lignes : bus factor ?', component: Annexe_C2_BusFactor },
   { id: 'C3', cat: 'Métier', question: 'Les utilisateurs l\u2019utilisent-ils vraiment ?' },
   { id: 'C4', cat: 'Métier', question: 'Que gagne concrètement MIKA Services ?' },
   // ── Limites ──
-  { id: 'L1', cat: 'Limites', question: 'L\u2019IA : qu\u2019est-ce qui fonctionne réellement ?' },
+  { id: 'L1', cat: 'Limites', question: 'L\u2019IA : qu\u2019est-ce qui fonctionne réellement ?', component: Annexe_L1_IA },
   { id: 'L2', cat: 'Limites', question: 'QSHE partiel : que manque-t-il et pourquoi ?' },
-  { id: 'L3', cat: 'Limites', question: 'Avez-vous utilisé l\u2019IA générative pour ce projet ?' },
+  { id: 'L3', cat: 'Limites', question: 'Avez-vous utilisé l\u2019IA générative pour ce projet ?', component: Annexe_L3_IAGenerative },
 ]
